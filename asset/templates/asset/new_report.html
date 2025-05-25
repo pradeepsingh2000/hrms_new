@@ -1,0 +1,174 @@
+{% extends 'index.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="oh-wrapper">
+    <div class="oh-content--inner">
+        <!-- Main Content Header -->
+        <div class="oh-content-header">
+            <div class="oh-content-header__title">
+                <h3>{% trans "Detailed Reports" %}</h3>
+            </div>
+        </div>
+
+        <!-- Main Content Body -->
+        <div class="oh-content-body">
+            <div class="container-fluid">
+                <!-- Report Filter Section -->
+                <div class="card oh-card mb-4">
+                    <div class="card-body">
+                        <form id="reportFilterForm" class="row g-3">
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">{% trans "Department" %}</label>
+                                <select class="form-control">
+                                    <option value="">{% trans "All Departments" %}</option>
+                                    <option value="hr">{% trans "HR" %}</option>
+                                    <option value="it">{% trans "IT" %}</option>
+                                    <option value="finance">{% trans "Finance" %}</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">{% trans "Date Range" %}</label>
+                                <input type="date" class="form-control" name="date_range">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">{% trans "Report Type" %}</label>
+                                <select class="form-control" id="reportType">
+                                    <option value="attendance">{% trans "Attendance Report" %}</option>
+                                    <option value="performance">{% trans "Performance Report" %}</option>
+                                    <option value="leave">{% trans "Leave Report" %}</option>
+                                </select>
+                            </div>
+                            <div class="col-12 text-end mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-filter me-2"></i>{% trans "Generate Report" %}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Report Data Section -->
+                <div class="row">
+                    <!-- Summary Cards -->
+                    <div class="col-12 col-md-6 col-lg-3 mb-4">
+                        <div class="card oh-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="oh-card__icon bg-primary">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0">{% trans "Total Employees" %}</h6>
+                                        <h3 class="mb-0">150</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-3 mb-4">
+                        <div class="card oh-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="oh-card__icon bg-success">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0">{% trans "Present Today" %}</h6>
+                                        <h3 class="mb-0">142</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-3 mb-4">
+                        <div class="card oh-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="oh-card__icon bg-warning">
+                                        <i class="fas fa-user-clock"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0">{% trans "On Leave" %}</h6>
+                                        <h3 class="mb-0">8</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-3 mb-4">
+                        <div class="card oh-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="oh-card__icon bg-info">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0">{% trans "Performance" %}</h6>
+                                        <h3 class="mb-0">92%</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Report Table -->
+                    <div class="col-12">
+                        <div class="card oh-card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>{% trans "Employee" %}</th>
+                                                <th>{% trans "Department" %}</th>
+                                                <th>{% trans "Status" %}</th>
+                                                <th>{% trans "Attendance" %}</th>
+                                                <th>{% trans "Performance" %}</th>
+                                                <th>{% trans "Actions" %}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>John Doe</td>
+                                                <td>IT</td>
+                                                <td><span class="badge bg-success">Present</span></td>
+                                                <td>95%</td>
+                                                <td>88%</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <!-- Add more rows as needed -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        // Initialize any necessary plugins
+        $('#reportFilterForm').on('submit', function(e) {
+            e.preventDefault();
+            // Add your report generation logic here
+        });
+
+        // Add any additional JavaScript functionality
+    });
+</script>
+{% endblock %}
+{% endblock %} 
