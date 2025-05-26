@@ -1,0 +1,130 @@
+{% extends 'index.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="oh-wrapper">
+    <div class="oh-main__content">
+        <div class="row">
+            <div class="col-12 col-md-8 col-lg-6 mx-auto">
+                <div class="oh-card">
+                    <div class="oh-card__header">
+                        <h5 class="oh-card__title">{% trans "Create Expense Category" %}</h5>
+                    </div>
+                    <div class="oh-card__body">
+                        <form method="post" class="oh-form">
+                            {% csrf_token %}
+                            
+                            <div class="oh-form__group">
+                                <label for="category_name" class="oh-label">{% trans "Category Name" %}</label>
+                                <input 
+                                    type="text" 
+                                    id="category_name" 
+                                    name="category_name" 
+                                    class="oh-input" 
+                                    required
+                                    placeholder="{% trans 'Enter category name' %}"
+                                >
+                            </div>
+
+                            <div class="oh-form__group">
+                                <label for="description" class="oh-label">{% trans "Description" %}</label>
+                                <textarea 
+                                    id="description" 
+                                    name="description" 
+                                    class="oh-input" 
+                                    rows="3"
+                                    placeholder="{% trans 'Enter category description' %}"
+                                ></textarea>
+                            </div>
+
+                            <div class="oh-form__group">
+                                <label for="budget_limit" class="oh-label">{% trans "Monthly Budget Limit" %}</label>
+                                <div class="oh-input-group">
+                                    <span class="oh-input-group__icon oh-input-group__icon--left">$</span>
+                                    <input 
+                                        type="number" 
+                                        id="budget_limit" 
+                                        name="budget_limit" 
+                                        class="oh-input oh-input__icon" 
+                                        step="0.01"
+                                        min="0"
+                                        placeholder="0.00"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="oh-form__group">
+                                <label class="oh-label d-block">{% trans "Category Type" %}</label>
+                                <div class="oh-radio-group">
+                                    <div class="oh-radio">
+                                        <input 
+                                            type="radio" 
+                                            id="type_regular" 
+                                            name="category_type" 
+                                            value="regular" 
+                                            class="oh-radio__input"
+                                            checked
+                                        >
+                                        <label for="type_regular" class="oh-radio__label">{% trans "Regular" %}</label>
+                                    </div>
+                                    <div class="oh-radio">
+                                        <input 
+                                            type="radio" 
+                                            id="type_reimbursable" 
+                                            name="category_type" 
+                                            value="reimbursable" 
+                                            class="oh-radio__input"
+                                        >
+                                        <label for="type_reimbursable" class="oh-radio__label">{% trans "Reimbursable" %}</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="oh-form__group">
+                                <label class="oh-label d-block">{% trans "Status" %}</label>
+                                <div class="oh-switch">
+                                    <input 
+                                        type="checkbox" 
+                                        id="is_active" 
+                                        name="is_active" 
+                                        class="oh-switch__input"
+                                        checked
+                                    >
+                                    <label for="is_active" class="oh-switch__label">{% trans "Active" %}</label>
+                                </div>
+                            </div>
+
+                            <div class="oh-form__actions">
+                                <button type="submit" class="oh-btn oh-btn--primary">
+                                    {% trans "Create Category" %}
+                                </button>
+                                <a href="{% url 'newReport:dashboard' %}" class="oh-btn oh-btn--secondary">
+                                    {% trans "Cancel" %}
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .oh-radio-group {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .oh-form__actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .oh-switch {
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}

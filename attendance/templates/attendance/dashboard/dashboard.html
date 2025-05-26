@@ -12,7 +12,7 @@
         <div class="oh-dashboard row">
             <div class="oh-dashboard__cards row">
                 <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                    <div class="oh-card-dashboard oh-card-dashboard--neutral">
+                    <div class="oh-card-dashboard oh-card-dashboard--neutral" style="border-radius: 15px;">
                         <div class="oh-card-dashboard__header">
                             <span class="oh-card-dashboard__title">{% trans "Today's Attendances" %}</span>
                         </div>
@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                    <div class="oh-card-dashboard oh-card-dashboard oh-card-dashboard--success">
+                    <div class="oh-card-dashboard oh-card-dashboard oh-card-dashboard--success" style="border-radius: 15px;">
                         <div class="oh-card-dashboard__header">
                             <span class="oh-card-dashboard__title">{% trans "On Time" %}</span>
                         </div>
@@ -43,7 +43,7 @@
                 </div>
                 {% if late_come_early_out_tracking %}
                 <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                    <div class="oh-card-dashboard oh-card-dashboard--danger">
+                    <div class="oh-card-dashboard oh-card-dashboard--danger" style="border-radius: 15px;">
                         <div class="oh-card-dashboard__header">
                             <span class="oh-card-dashboard__title">{% trans "Late Come" %}</span>
                         </div>
@@ -56,11 +56,13 @@
                     {% endif %}
                 </div>
             </div>
+
+            
             <div class="oh-dashboard row pt-3">
                 <div class="oh-dashboard__movable-cards row mt-4">
                     <div class="col-12 col-sm-12 col-md-12 col-lg-4 ">
                         <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent"
-                            style="min-height: 423px;">
+                            style="min-height: 423px;border-radius: 15px;">
                             <div class="oh-card-dashboard__header oh-card-dashboard__header--divider"
                                 style="margin-bottom:2.25rem;" id="attendance_header">
                                 <div class="oh-card-dashboard__title mb-2">
@@ -99,7 +101,7 @@
                     </div>
                     <div class="col-12 col-sm-12 col-md-12 col-lg-4">
                         <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent"
-                            style="min-height: 423px">
+                            style="min-height: 423px;border-radius: 15px;">
                             <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
                                 <span class="oh-card-dashboard__title">{% trans 'Offline Employees' %}
                                 </span>
@@ -113,7 +115,7 @@
 
                     <div class="col-12 col-sm-12 col-md-12 col-lg-4 " id="pendingHours">
                         <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent"
-                            style="min-height: 423px;">
+                            style="min-height: 423px;border-radius: 15px;">
                             <div class="oh-card-dashboard__header oh-card-dashboard__header--divider"
                                 id="pendingHoursHeader">
                                 <div class="d-flex justify-content-between">
@@ -137,7 +139,7 @@
 
             <div class="oh-dashboard row pt-3">
                 <div class="col-12 col-sm-12 col-md-12 col-lg-3 ">
-                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
+                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent" style="border-radius: 15px;">
                         <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
                             <span class="oh-card-dashboard__title">{% trans "On Break" %}</span>
                         </div>
@@ -165,7 +167,7 @@
 
             <div class="oh-dashboard row pt-3">
                 <div class="col-12 col-sm-12 col-md-12 col-lg-8">
-                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent h-100">
+                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent h-100" style="border-radius: 15px;">
                         <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
                             <span class="oh-card-dashboard__title">{% trans "Attendance To Validate" %}</span>
                         </div>
@@ -176,7 +178,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-sm-12 col-md-12 col-lg-4 " id="departmentChartCard">
-                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
+                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent" style="border-radius: 15px;">
                         <div class="oh-card-dashboard__header oh-card-dashboard__header--divider"
                             id="departmentChartHeader">
                             <div class="oh-card-dashboard__title mb-2">

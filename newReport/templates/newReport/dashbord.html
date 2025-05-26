@@ -1,0 +1,261 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Dashboard</title>
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard-container {
+            padding: 2rem;
+            background-color: #f8f9fa;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-title {
+            color: #6c757d;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1077DA;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .expense-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .expense-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .expense-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .expense-table td {
+            padding: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Total Expenses</div>
+                <div class="stat-value">$24,500</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Pending Approvals</div>
+                <div class="stat-value">12</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">This Month</div>
+                <div class="stat-value">$8,750</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Average per Request</div>
+                <div class="stat-value">$420</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-grid">
+            <div class="chart-container">
+                <h3>Monthly Expenses</h3>
+                <canvas id="expenseChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Expense Categories</h3>
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Expenses Table -->
+        <div class="expense-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-03-15</td>
+                        <td>Office Supplies</td>
+                        <td>Supplies</td>
+                        <td>$250.00</td>
+                        <td><span class="status-badge status-approved">Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td>2024-03-14</td>
+                        <td>Client Meeting Lunch</td>
+                        <td>Meals</td>
+                        <td>$120.00</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>2024-03-13</td>
+                        <td>Software License</td>
+                        <td>Technology</td>
+                        <td>$599.00</td>
+                        <td><span class="status-badge status-approved">Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td>2024-03-12</td>
+                        <td>Travel Expenses</td>
+                        <td>Travel</td>
+                        <td>$850.00</td>
+                        <td><span class="status-badge status-rejected">Rejected</span></td>
+                    </tr>
+                    <tr>
+                        <td>2024-03-11</td>
+                        <td>Training Materials</td>
+                        <td>Training</td>
+                        <td>$375.00</td>
+                        <td><span class="status-badge status-approved">Approved</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Monthly Expenses Chart
+        const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+        new Chart(expenseCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Monthly Expenses',
+                    data: [4500, 5200, 8750, 7200, 6800, 8500],
+                    borderColor: '#1077DA',
+                    tension: 0.4,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Category Chart
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Travel', 'Supplies', 'Technology', 'Meals', 'Training'],
+                datasets: [{
+                    data: [30, 20, 25, 15, 10],
+                    backgroundColor: [
+                        '#1077DA',
+                        '#34C3FF',
+                        '#5856D6',
+                        '#FF9500',
+                        '#4CD964'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %} 

@@ -7,15 +7,15 @@ IMG_SRC = "images/ui/wallet-outline.svg"
 SUBMENUS = [
     {
         "menu": trans("Dashboard"),
-        "redirect": "#",
+        "redirect": "/report/dashboard",
     },
     {
         "menu": trans("Category"),
-        "redirect": "#",
+        "redirect": "/report/category",
     },
     {
         "menu": trans("Create Expense"),
-        "redirect": "#",
+        "redirect": "/report/create-category",
     },
    
    
