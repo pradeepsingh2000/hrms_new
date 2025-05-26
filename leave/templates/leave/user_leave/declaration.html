@@ -1,0 +1,85 @@
+
+{% extends 'index.html' %}
+{% load static %}
+{% load i18n %}
+{% block content %}
+<section class="oh-wrapper oh-main__topbar" x-data="{searchShow: false}">
+    <div class="oh-main__titlebar oh-main__titlebar--left">
+        <h1 class="oh-main__titlebar-title fw-bold">
+            Declaration
+        </h1>
+
+        <a class="oh-main__titlebar-search-toggle" role="button" aria-label="Toggle Search" @click="searchShow = !searchShow">
+            <ion-icon name="search-outline" class="oh-main__titlebar-serach-icon md hydrated" role="img"></ion-icon>
+        </a>
+    </div>
+     <div class="oh-input-group oh-input__search-group" :class="searchShow ? 'oh-input__search-group--show' : ''">
+        <ion-icon name="search-outline" class="oh-input-group__icon oh-input-group__icon--left md hydrated"
+            role="img"></ion-icon>
+        <input type="text" class="oh-input oh-input__icon" aria-label="Search Input" id="attendance-search"
+            name="search" placeholder="Search">
+
+    </div>
+    
+    </section>
+
+
+    <div class="">
+<ul class="oh-tabs__tablist">
+            <li class="oh-tabs__tab oh-tabs__tab--active d-flex justify-content-between" data-target="#payrole">
+                <div>
+                    <div>
+                       
+                        {% trans "Proof submission" %}
+                    </div>
+                </div>
+                {% if perms.payroll.add_allowance and active_contracts %}
+                    <button title="Add Bonus"
+                        class="oh-btn oh-btn--secondary-outline oh-stop-prop oh-accordion-meta__btn p-2" title="Add"
+                        data-target="#objectCreateModal" data-toggle="oh-modal-toggle">
+                        <ion-icon class="md hydrated" name="add-outline" role="img" aria-label="add outline"></ion-icon>
+                    </button>
+                {% endif %}
+            </li>
+            <li class="oh-tabs__tab" data-target="#history">
+                <div>
+                   
+                    {% trans "IT Declaration" %}
+                </div>
+            </li>
+        </ul>
+    </div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('[data-tab]');
+        const panels = ['payrole', 'history'];
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('oh-tabs__tab--active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('oh-tabs__tab--active');
+                
+                // Show/hide panels
+                panels.forEach(panelId => {
+                    const panel = document.getElementById(panelId);
+                    if (panel) {
+                        if (tab.dataset.tab === 'payrole' && panelId === 'payrole' ||
+                            tab.dataset.tab === 'history' && panelId === 'history') {
+                            panel.classList.remove('d-none');
+                        } else {
+                            panel.classList.add('d-none');
+                        }
+                    }
+                });
+            });
+        });
+    });
+</script> 
+
+{% endblock %} 

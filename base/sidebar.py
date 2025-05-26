@@ -7,11 +7,11 @@ IMG_SRC = "images/ui/approval.svg"
 SUBMENUS = [
     {
         "menu": trans("Leave"),
-        "redirect": "/leave/user-request-view/",
+        "redirect": "/leave/request-view/",
     },
      {
         "menu": trans("Attendance"),
-        "redirect": "/attendance/dashboard",
+        "redirect": "/attendance/attendance-view",
     },
     {
         "menu": trans("Shift"),
@@ -19,31 +19,31 @@ SUBMENUS = [
     },
      {
         "menu": trans("Overtime"),
-        "redirect": "/attendance/dashboard",
+        "redirect": "/leave/overtime",
     },
     {
         "menu": trans("Week Off"),
-        "redirect": "/leave/user-request-view/",
+        "redirect": "/leave/week-off/",
     },
      {
         "menu": trans("Payroll"),
-        "redirect": "/payroll/view-payroll-dashboard/",
+        "redirect": "/leave/payrole/",
     },
      {
         "menu": trans("Declaration"),
-        "redirect": "/payroll/view-payroll-dashboard/",
+        "redirect": "/leave/declaration/",
     },
       {
         "menu": trans("Salary Revision"),
-        "redirect": "#",  # You'll need to add the correct URL when available
+        "redirect": "/leave/salary-revision/"  # You'll need to add the correct URL when available
     },
     {
         "menu": trans("Claim"),
-        "redirect": "/leave/leave-dashboard",
+        "redirect": "/leave/claim/",
     },
     {
         "menu": trans("Expense"),
-        "redirect": "payroll/view-reimbursement/",
+        "redirect": "/leave/expense/",
     },
     {
         "menu": trans("Assets"),

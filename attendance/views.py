@@ -307,6 +307,71 @@ def attendance_search(request):
         },
     )
 
+# @login_required
+# def attendance_overtime(request):
+#     """
+#     This method is used to search attendance by employee
+#     """
+#     previous_data = request.environ["QUERY_STRING"]
+#     field = request.GET.get("field")
+#     minot = strtime_seconds("00:30")
+#     condition = AttendanceValidationCondition.objects.first()
+#     if condition is not None:
+#         minot = strtime_seconds(condition.minimum_overtime_to_approve)
+
+#     validate_attendances = Attendance.objects.filter(attendance_validated=False)
+#     attendances = Attendance.objects.filter(attendance_validated=True)
+#     ot_attendances = Attendance.objects.filter(
+#         attendance_overtime_approve=False,
+#         overtime_second__gte=minot,
+#         attendance_validated=True,
+#     )
+
+#     validate_attendances = AttendanceFilters(request.GET, validate_attendances).qs
+#     attendances = AttendanceFilters(request.GET, attendances).qs
+#     ot_attendances = AttendanceFilters(request.GET, ot_attendances).qs
+
+#     template = "attendance/attendance/overtime_attendace.html"
+#     if field != "" and field is not None:
+#         field_copy = field.replace(".", "__")
+#         attendances = attendances.order_by(field_copy)
+#         validate_attendances = validate_attendances.order_by(field_copy)
+#         ot_attendances = ot_attendances.order_by(field_copy)
+#         template = "attendance/attendance/group_by.html"
+
+#     attendances = filtersubordinates(request, attendances, "attendance.view_attendance")
+#     validate_attendances = filtersubordinates(
+#         request, validate_attendances, "attendance.view_attendance"
+#     )
+#     ot_attendances = filtersubordinates(
+#         request, ot_attendances, "attendance.view_attendance"
+#     )
+
+#     attendances = sortby(request, attendances, "sortby")
+#     validate_attendances = sortby(request, validate_attendances, "sortby")
+#     ot_attendances = sortby(request, ot_attendances, "sortby")
+
+#     return render(
+#         request,
+#         template,
+#         {
+#             "validate_attendances": paginator_qry(
+#                 validate_attendances, request.GET.get("vpage")
+#             ),
+#             "attendances": paginator_qry(attendances, request.GET.get("page")),
+#             "overtime_attendances": paginator_qry(
+#                 ot_attendances, request.GET.get("opage")
+#             ),
+#             "pd": previous_data,
+#             "field": field,
+#         },
+#     )
+
+
+@login_required
+@manager_can_enter("attendance.view_attendance")
+def attendance_overtime(request):
+    return render(request, "attendance/attendance/overtime_attendace.html")
 
 @login_required
 @manager_can_enter("attendance.change_attendance")

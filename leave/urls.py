@@ -132,6 +132,13 @@ urlpatterns = [
     path("restrict-day-select", views.restrict_day_select, name="restrict-day-select"),
     path("user-leave-filter", views.user_leave_filter, name="user-leave-filter"),
     path("user-request-view/", views.user_request_view, name="user-request-view"),
+    path("week-off/", views.week_off, name="weekoff"),
+    path("expense/", views.expense, name="expense"),
+    path("claim/", views.claim, name="claim"),
+    path("salary-revision/", views.salary_revision, name="revision"),
+     path("payrole/", views.weekpayrole_off, name="salary-revision"),
+     path('overtime/',views.overtime,name="overtime"),
+     path('declaration/',views.declaration,name='declaration'),
     path(
         "user-request-update/<int:id>",
         views.user_request_update,

@@ -2,29 +2,37 @@
 {% load static %}
 
 <div class="oh-wrapper">
-    <div class="oh-card">
-        <div class="oh-card__header">
-            <div class="oh-tabs">
-                <div class="oh-tabs__tablist" role="tablist">
-                    <button class="oh-tabs__tab oh-tabs__tab--active" 
-                            data-tab="investment" 
-                            role="tab"
-                            hx-get="{% url 'investment-data' employee.id %}"
-                            hx-target="#investmentPanel"
-                            hx-trigger="click, load">
+ 
+ <div class="oh-card__header">
+     <ul class="oh-tabs__tablist" role="tablist">
+            <li class="oh-tabs__tab oh-tabs__tab--active d-flex justify-content-between"
+                data-tab="investment" data-target="#investmentPanel" role="tab"
+                hx-get="{% url 'investment-data' employee.id %}"
+                hx-target="#investmentPanel"
+                hx-trigger="click, load">
+                <div>
+                    <div>
+                        
                         {% trans "Proof submission" %}
-                    </button>
-                    <button class="oh-tabs__tab" 
-                            data-tab="id-proof" 
-                            role="tab"
-                            hx-get="{% url 'id-proof-data' employee.id %}"
-                            hx-target="#idProofPanel"
-                            hx-trigger="click">
-                        {% trans "IT Declaration" %}
-                    </button>
+                    </div>
                 </div>
-            </div>
-        </div>
+               
+            </li>
+
+            <li class="oh-tabs__tab"
+                data-tab="id-proof" data-target="#idProofPanel" role="tab"
+                hx-get="{% url 'id-proof-data' employee.id %}"
+                hx-target="#idProofPanel"
+                hx-trigger="click">
+                <div>
+                    
+                    {% trans "IT Declaration" %}
+                </div>
+            </li>
+        </ul>
+</div>
+
+
         <div class="oh-card__body">
             <div id="investmentPanel">
                 <!-- Investment data will be loaded here -->
@@ -33,7 +41,7 @@
                 <!-- ID proof data will be loaded here -->
             </div>
         </div>
-    </div>
+   
 </div>
 
 <script>

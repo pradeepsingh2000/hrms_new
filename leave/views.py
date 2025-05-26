@@ -2563,6 +2563,40 @@ def user_request_view(request):
         messages.error(request, _("User is not an employee.."))
         return redirect("/")
 
+@login_required
+def week_off(request):
+    request.session['breadcrumbs'] = []
+    return render(request, "leave/user_leave/weekoff.html")
+
+@login_required
+def expense(request):
+    request.session['breadcrumbs'] = []
+    return render(request, "leave/user_leave/expense_temp.html")   
+
+@login_required
+def claim(request):
+    request.session['breadcrumbs'] = []
+    return render(request, "leave/user_leave/claim.html")
+
+@login_required
+def salary_revision(request):
+    request.session['breadcrumbs'] = []
+    return render(request, "leave/user_leave/salary_revision.html")
+
+@login_required
+def weekpayrole_off(request):
+    request.session['breadcrumbs'] = []
+    return render(request, "leave/user_leave/weekpayrole.html")
+
+@login_required
+def overtime(request):
+    request.session['breadcrumbs'] = []
+    return render(request, "leave/user_leave/overtime.html")
+
+@login_required
+def declaration(request):
+    request.session['breadcrumbs'] = []
+    return render(request, "leave/user_leave/declaration.html")
 
 @login_required
 @hx_request_required
