@@ -1,83 +1,189 @@
 {% load i18n static %}
 {% if feedbacks %}
-<div class="oh-sticky-table h-100">
-    <div class="oh-sticky-table__table">
-        <div class="oh-sticky-table__thead">
-            <div class="oh-sticky-table__tr">
-                <div class="oh-sticky-table__th">{% trans "Employee" %}</div>
-                <div class="oh-sticky-table__th">{% trans "Title" %}</div>
-                <div class="oh-sticky-table__th">{% trans "Due Date" %}</div>
-                <div class="oh-sticky-table__th" align="center">{% trans "Actions" %}</div>
-            </div>
-        </div>
-        <div class="oh-sticky-table__tbody">
+<div class="table-container">
+    <table class="sleek-table">
+        <thead>
+            <tr>
+                <th>{% trans "Employee" %}</th>
+                <th>{% trans "Title" %}</th>
+                <th>{% trans "Due Date" %}</th>
+                <th>{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
             {% for feedback in feedbacks %}
-            <div class="oh-sticky-table__tr">
-                <div class="oh-sticky-table__sd">
-                    <div class="oh-profile oh-profile--md">
-                        <div class="oh-profile__avatar mr-1">
-                            <img
-                                src="{{feedback.employee_id.get_avatar}}"
-                                class="oh-profile__image"
-                            />
-                        </div>
-                        <span class="oh-profile__name oh-text--dark"
-                            >{{feedback.employee_id}}</span
-                        >
+            <tr>
+                <td>
+                    <div class="user-info">
+                        <img src="{{feedback.employee_id.get_avatar}}" alt="{{feedback.employee_id}}">
+                        <span>{{feedback.employee_id}}</span>
                     </div>
-                </div>
-                <div class="oh-sticky-table__td">
-                    {{feedback.review_cycle | title}}
-                </div>
-                <div class="oh-sticky-table__td">
-                    {{ current_date|timesince:feedback.end_date }}
-                </div>
-                <div class="oh-sticky-table__td">
-                    <div class="oh-btn-group">
-                        <a
-                            class="oh-btn oh-btn--info w-100"
-                            href="{% url 'feedback-answer-get' id=feedback.id %}"
-                            title="{% trans 'Answer' %}"
-                            >{% trans "Answer" %}</a>
+                </td>
+                <td>{{feedback.review_cycle | title}}</td>
+                <td>{{ current_date|timesince:feedback.end_date }}</td>
+                <td>
+                    <div class="action-group">
+                        <a class="oh-btn oh-btn--info w-100" href="{% url 'feedback-answer-get' id=feedback.id %}" title="{% trans 'Answer' %}">
+                            {% trans "Answer" %}
+                        </a>
                     </div>
-                </div>
-            </div>
-            {% endfor%}
-        </div>
-    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% else %}
-    <div class="oh-empty h-100">
-        <img src="{% static 'images/ui/search.svg' %}" class="oh-404__image" alt="Page not found. 404." />
-        <h1 class="oh-empty__title">{% trans "No Records found." %}</h1>
-        <p class="oh-empty__subtitle">{% trans "No records available at the moment." %}</p>
-    </div>
+<div class="empty-view">
+    <img src="{% static 'images/ui/search.svg' %}" class="oh-404__image" alt="No records">
+    <p>{% trans "No records available" %}</p>
+</div>
 {% endif %}
-{% if feedbacks.has_next or feedbacks.has_previous %}
-    <div class=" float-end mt-3 mb-3">
-        {% if feedbacks.has_previous %}
-            <span class="oh-card-dashboard__title" style="cursor: pointer"
-                hx-target="#feedbackAnswerCardBody"
-                hx-get="{% url 'dashboard-feedback-answer' %}?{{pd}}&page={{ feedbacks.previous_page_number }}"
-                hx-trigger="click delay:0.3s">
-                <ion-icon name="caret-back-outline" role="img" class="md hydrated" aria-label="caret back outline"></ion-icon>
-            </span>
-        {% endif %}
 
-        {% if feedbacks.has_next %}
-            <span class="oh-card-dashboard__title float-end ms-2" style="cursor: pointer"
-                hx-target="#feedbackAnswerCardBody"
-                hx-get="{% url 'dashboard-feedback-answer' %}?{{pd}}&page={{ feedbacks.next_page_number }}"
-                hx-trigger="click delay:0.3s">
-                <ion-icon name="caret-forward-outline" role="img" class="md hydrated"
-                    aria-label="caret back outline"></ion-icon>
-            </span>
-        {% endif %}
-        {% if feedbacks.has_next or feedbacks.has_previous %}
-            <span class="oh-pagination__page float-end fw-bold">
-                {% trans "Page" %} {{ feedbacks.number }} {%trans "of" %}
-                {{feedbacks.paginator.num_pages }}
-            </span>
-        {% endif %}
-    </div>
+{% if feedbacks.has_next or feedbacks.has_previous %}
+<div class="pagination">
+    {% if feedbacks.has_previous %}
+    <button class="page-btn"
+        hx-target="#feedbackAnswerCardBody"
+        hx-get="{% url 'dashboard-feedback-answer' %}?{{pd}}&page={{ feedbacks.previous_page_number }}"
+        hx-trigger="click delay:0.3s">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    {% endif %}
+    
+    <span>{{ feedbacks.number }}/{{feedbacks.paginator.num_pages }}</span>
+
+    {% if feedbacks.has_next %}
+    <button class="page-btn"
+        hx-target="#feedbackAnswerCardBody"
+        hx-get="{% url 'dashboard-feedback-answer' %}?{{pd}}&page={{ feedbacks.next_page_number }}"
+        hx-trigger="click delay:0.3s">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    {% endif %}
+</div>
 {% endif %}
+
+<style>
+.table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    overflow: auto;
+}
+
+.sleek-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.sleek-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 500;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.sleek-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.sleek-table tr:hover {
+    background: #f8fafc;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info span {
+    font-weight: 500;
+}
+
+.action-group {
+    display: flex;
+    gap: 8px;
+}
+
+.empty-view {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-view img {
+    width: 120px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-view p {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 12px;
+}
+
+.page-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.page-btn:hover {
+    border-color: #94a3b8;
+    color: #334155;
+}
+
+.pagination span {
+    font-size: 13px;
+    color: #64748b;
+}
+
+@media (max-width: 640px) {
+    .sleek-table {
+        font-size: 12px;
+    }
+    
+    .sleek-table td, 
+    .sleek-table th {
+        padding: 10px 12px;
+    }
+    
+    .user-info img {
+        width: 24px;
+        height: 24px;
+    }
+}
+</style>

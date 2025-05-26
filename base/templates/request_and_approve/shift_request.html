@@ -1,100 +1,232 @@
 {% load i18n static %}
 
 {% if requests %}
-<div class="oh-sticky-table h-100">
-    <div class="oh-sticky-table__table oh-table--sortable">
-        <div class="oh-sticky-table__thead">
-            <div class="oh-sticky-table__tr">
-                <div class="oh-sticky-table__th">{% trans "Employee" %}</div>
-				<div class="oh-sticky-table__th">{% trans "Requested Shift" %}</div>
-				<div class="oh-sticky-table__th">{% trans "Previous/ Current Shift" %}</div>
-                <div class="oh-sticky-table__th" align="center">{% trans "Actions" %}</div>
-            </div>
-        </div>
-        {% for shift_request in requests %}
-        <div class="oh-sticky-table__tbody">
-            <div
-                class="oh-sticky-table__tr"
-                hx-get="{% url 'shift-request-details' shift_request.id %}?instances_ids={{requests_ids}}&dashboard=true"
+<div class="table-container">
+    <table class="sleek-table">
+        <thead>
+            <tr>
+                <th>{% trans "Employee" %}</th>
+                <th>{% trans "Requested Shift" %}</th>
+                <th>{% trans "Previous/ Current Shift" %}</th>
+                <th>{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shift_request in requests %}
+            <tr hx-get="{% url 'shift-request-details' shift_request.id %}?instances_ids={{requests_ids}}&dashboard=true"
                 hx-target="#objectDetailsModalTarget"
                 data-toggle="oh-modal-toggle"
-                data-target="#objectDetailsModal"
-            >
-                <div class="oh-sticky-table__sd">
-                    <div class="oh-profile oh-profile--md">
-                        <div class="oh-profile__avatar mr-1">
-                            <img
-                                src="{{shift_request.employee_id.get_avatar}}"
-                                class="oh-profile__image"
-                                alt="Username"
-                            />
-                        </div>
-                        <span class="oh-profile__name oh-text--dark"
-                            >{{shift_request.employee_id}}</span
-                        >
+                data-target="#objectDetailsModal">
+                <td>
+                    <div class="user-info">
+                        <img src="{{shift_request.employee_id.get_avatar}}" alt="{{shift_request.employee_id}}">
+                        <span>{{shift_request.employee_id}}</span>
                     </div>
-                </div>
-				<div class="oh-sticky-table__td">{{shift_request.shift_id}}</div>
-				<div class="oh-sticky-table__td">{{shift_request.previous_shift_id}}</div>
-                <div
-                    class="oh-sticky-table__td"
-                    onclick="event.stopPropagation();"
-                >
-                    <div class="oh-btn-group float-end">
-                        <a
-                            href="/shift-request-approve/{{shift_request.id}}/"
-							onclick="return confirm('{% trans "Do you want to approve this shift request?" %}')"
-                            class="oh-btn oh-btn--success"
-                            title="Approve"
-                            ><ion-icon name="checkmark-outline"></ion-icon
-                        ></a>
-
-                        <a
-                            href="/shift-request-cancel/{{shift_request.id}}/"
-							onclick="return confirm('{% trans "Do you want to cancel this request?" %}')"
-                            class="oh-btn oh-btn--danger"
-                            title="cancel"
-                            ><ion-icon name="close-circle-outline"></ion-icon
-                        ></a>
+                </td>
+                <td>{{shift_request.shift_id}}</td>
+                <td>{{shift_request.previous_shift_id}}</td>
+                <td onclick="event.stopPropagation();">
+                    <div class="action-group">
+                        <button class="action-btn approve"
+                            hx-confirm="{% trans 'Do you want to approve this shift request?' %}"
+                            hx-post="/shift-request-approve/{{shift_request.id}}/"
+                            hx-target="#shiftRequestApproveBody"
+                            hx-on-htmx-after-request="setTimeout(() => { reloadMessage(); }, 100);">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn reject"
+                            onclick="if(confirm('{% trans 'Do you want to cancel this request?' %}')) window.location.href='/shift-request-cancel/{{shift_request.id}}/'">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
                     </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% else %}
-    <div class="oh-empty h-100">
-        <img src="{% static 'images/ui/search.svg' %}" class="oh-404__image" alt="Page not found. 404." />
-        <h1 class="oh-empty__title">{% trans "No Records found." %}</h1>
-        <p class="oh-empty__subtitle">{% trans "No records available at the moment." %}</p>
-    </div>
+<div class="empty-view">
+    <img src="{% static 'images/ui/search.svg' %}" class="oh-404__image" alt="No records">
+    <p>{% trans "No records available" %}</p>
+</div>
 {% endif %}
-{% if requests.has_next or requests.has_previous %}
-    <div class=" float-end mt-3 mb-3">
-        {% if requests.has_previous %}
-            <span class="oh-card-dashboard__title" style="cursor: pointer"
-                hx-target="#shiftRequestApproveBody"
-                hx-get="{% url 'dashboard-shift-request' %}?{{pd}}&page={{ requests.previous_page_number }}"
-                hx-trigger="click delay:0.3s">
-                <ion-icon name="caret-back-outline" role="img" class="md hydrated" aria-label="caret back outline"></ion-icon>
-            </span>
-        {% endif %}
 
-        {% if requests.has_next %}
-            <span class="oh-card-dashboard__title float-end ms-2" style="cursor: pointer"
-                hx-target="#shiftRequestApproveBody"
-                hx-get="{% url 'dashboard-shift-request' %}?{{pd}}&page={{ requests.next_page_number }}"
-                hx-trigger="click delay:0.3s">
-                <ion-icon name="caret-forward-outline" role="img" class="md hydrated"
-                    aria-label="caret back outline"></ion-icon>
-            </span>
-        {% endif %}
-        {% if requests.has_next or requests.has_previous %}
-            <span class="oh-pagination__page float-end fw-bold">
-                {% trans "Page" %} {{ requests.number }} {%trans "of" %}
-                {{requests.paginator.num_pages }}
-            </span>
-        {% endif %}
-    </div>
+{% if requests.has_next or requests.has_previous %}
+<div class="pagination">
+    {% if requests.has_previous %}
+    <button class="page-btn"
+        hx-target="#shiftRequestApproveBody"
+        hx-get="{% url 'dashboard-shift-request' %}?{{pd}}&page={{ requests.previous_page_number }}"
+        hx-trigger="click delay:0.3s">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    {% endif %}
+
+    <span>{{ requests.number }}/{{requests.paginator.num_pages }}</span>
+
+    {% if requests.has_next %}
+    <button class="page-btn"
+        hx-target="#shiftRequestApproveBody"
+        hx-get="{% url 'dashboard-shift-request' %}?{{pd}}&page={{ requests.next_page_number }}"
+        hx-trigger="click delay:0.3s">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    {% endif %}
+</div>
 {% endif %}
+
+<style>
+.table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    overflow: auto;
+}
+
+.sleek-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.sleek-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 500;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.sleek-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.sleek-table tr:hover {
+    background: #f8fafc;
+    cursor: pointer;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info span {
+    font-weight: 500;
+}
+
+.action-group {
+    display: flex;
+    gap: 8px;
+}
+
+.empty-view {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-view img {
+    width: 120px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-view p {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 12px;
+}
+
+.page-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.page-btn:hover {
+    border-color: #94a3b8;
+    color: #334155;
+}
+
+.pagination span {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.action-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn.approve {
+    background: #22c55e15;
+    color: #16a34a;
+}
+
+.action-btn.reject {
+    background: #ef444415;
+    color: #dc2626;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+    .sleek-table {
+        font-size: 12px;
+    }
+    
+    .sleek-table td, 
+    .sleek-table th {
+        padding: 10px 12px;
+    }
+    
+    .user-info img {
+        width: 24px;
+        height: 24px;
+    }
+}
+</style>

@@ -1,121 +1,270 @@
 {% load i18n static basefilters %}
 {% if validate_attendances %}
-    <div class="oh-sticky-table h-100">
-        <div class="oh-sticky-table__table oh-table--sortable">
-            <div class="oh-sticky-table__thead">
-                <div class="oh-sticky-table__tr">
-                    <div class="oh-sticky-table__th">
-                        {% trans "Employee" %}
-                    </div>
-                    {% if not main_dashboard %}
-                        <div class="oh-sticky-table__th">
-                            {% trans "Date" %}
-                        </div>
-                        <div class="oh-sticky-table__th">{% trans "Check-In" %}</div>
-                        <div class="oh-sticky-table__th">
-                            {% trans "In Date" %}
-                        </div>
-                        <div class="oh-sticky-table__th">{% trans "Check-Out" %}</div>
-                        <div class="oh-sticky-table__th">
-                            {% trans "Out Date" %}
-                        </div>
-                        <div class="oh-sticky-table__th">{% trans "Shift" %}</div>
-                        <div class="oh-sticky-table__th">{% trans "Work Type" %}</div>
-                        <div class="oh-sticky-table__th">{% trans "Min Hour" %}</div>
-                        <div class="oh-sticky-table__th">
-                            {% trans "Pending Hour" %}
-                        </div>
-                    {% endif %}
-                    <div class="oh-sticky-table__th">
-                        {% trans "At Work" %}
-                    </div>
-                    <div class="oh-sticky-table__th oh-sticky-table__right">{% trans "Actions" %}</div>
-                </div>
-            </div>
+<div class="attendance-validate-wrapper">
+    <table class="attendance-validate-table">
+        <thead>
+            <tr>
+                <th>{% trans "Employee" %}</th>
+                {% if not main_dashboard %}
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Check-In" %}</th>
+                    <th>{% trans "In Date" %}</th>
+                    <th>{% trans "Check-Out" %}</th>
+                    <th>{% trans "Out Date" %}</th>
+                    <th>{% trans "Shift" %}</th>
+                    <th>{% trans "Work Type" %}</th>
+                    <th>{% trans "Min Hour" %}</th>
+                    <th>{% trans "Pending Hour" %}</th>
+                {% endif %}
+                <th>{% trans "At Work" %}</th>
+                <th class="text-right">{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
             {% for attendance in validate_attendances %}
-                <div class="oh-sticky-table__tbody">
-                    <div class="oh-sticky-table__tr" draggable="false" data-toggle="oh-modal-toggle"
-                        data-target="#objectDetailsModalW25" hx-target="#objectDetailsModalW25Target"
-                        hx-get="{% url 'user-request-one-view' attendance.id %}?validate=true&instances_ids={{validate_attendances_ids}}">
-
-                        <div class="oh-sticky-table__sd">
-                            <div class="oh-profile oh-profile--md">
-                                <div class="oh-profile__avatar mr-1">
-                                    <img src="{{attendance.employee_id.get_avatar}}" class="oh-profile__image"
-                                        alt="Mary Magdalene" />
-                                </div>
-                                <span class="oh-profile__name oh-text--dark">{{attendance.employee_id}}</span>
-                            </div>
-                        </div>
-                        {% if not main_dashboard %}
-                            <div class="oh-sticky-table__td dateformat_changer">{{attendance.attendance_date}}</div>
-                            <div class="oh-sticky-table__td timeformat_changer">
-                                {{attendance.attendance_clock_in}}
-                            </div>
-                            <div class="oh-sticky-table__td dateformat_changer">
-                                {{attendance.attendance_clock_in_date}}
-                            </div>
-                            <div class="oh-sticky-table__td timeformat_changer">
-                                {{attendance.attendance_clock_out}}
-                            </div>
-                            <div class="oh-sticky-table__td dateformat_changer">
-                                {{attendance.attendance_clock_out_date}}
-                            </div>
-                            <div class="oh-sticky-table__td">{{attendance.shift_id}}</div>
-                            <div class="oh-sticky-table__td">{{attendance.work_type_id}}</div>
-                            <div class="oh-sticky-table__td">{{attendance.minimum_hour}}</div>
-                            <div class="oh-sticky-table__td">{{attendance.hours_pending}}</div>
-                        {% endif %}
-                        <div class="oh-sticky-table__td">
-                            {{attendance.attendance_worked_hour}}
-                        </div>
-                        <div class="oh-sticky-table__td oh-sticky-table__right">
-                            {% if perms.attendance.change_attendance or request.user|is_reportingmanager %}
-                                <a href='{% url "validate-this-attendance" attendance.id %}' hx-target="#updateAttendanceBody"
-                                    data-req="/attendance/request-attendance-view/?id={{attendance.id}}"
-                                    onclick="event.stopPropagation(); {% if attendance.is_validate_request %}  event.preventDefault(); showSweetAlert($(this).data('req')); {% endif %}"
-                                    class="oh-btn oh-btn--info">
-                                    {% trans "Validate" %}
-                                </a>
-                            {% endif %}
-                        </div>
-
+            <tr draggable="false" 
+                data-toggle="oh-modal-toggle"
+                data-target="#objectDetailsModalW25" 
+                hx-target="#objectDetailsModalW25Target"
+                hx-get="{% url 'user-request-one-view' attendance.id %}?validate=true&instances_ids={{validate_attendances_ids}}">
+                <td>
+                    <div class="attendance-employee-info">
+                        <img src="{{attendance.employee_id.get_avatar}}" alt="{{attendance.employee_id}}" />
+                        <span>{{attendance.employee_id}}</span>
                     </div>
-                </div>
+                </td>
+                {% if not main_dashboard %}
+                    <td class="dateformat_changer">{{attendance.attendance_date}}</td>
+                    <td class="timeformat_changer">{{attendance.attendance_clock_in}}</td>
+                    <td class="dateformat_changer">{{attendance.attendance_clock_in_date}}</td>
+                    <td class="timeformat_changer">{{attendance.attendance_clock_out}}</td>
+                    <td class="dateformat_changer">{{attendance.attendance_clock_out_date}}</td>
+                    <td>{{attendance.shift_id}}</td>
+                    <td>{{attendance.work_type_id}}</td>
+                    <td>{{attendance.minimum_hour}}</td>
+                    <td>{{attendance.hours_pending}}</td>
+                {% endif %}
+                <td>{{attendance.attendance_worked_hour}}</td>
+                <td onclick="event.stopPropagation()">
+                    {% if perms.attendance.change_attendance or request.user|is_reportingmanager %}
+                    <div class="attendance-actions">
+                        <button class="attendance-validate-btn"
+                            hx-get='{% url "validate-this-attendance" attendance.id %}'
+                            hx-target="#updateAttendanceBody"
+                            data-req="/attendance/request-attendance-view/?id={{attendance.id}}"
+                            onclick="{% if attendance.is_validate_request %}event.preventDefault(); showSweetAlert($(this).data('req'));{% endif %}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span>{% trans "Validate" %}</span>
+                        </button>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
             {% endfor %}
-        </div>
-    </div>
+        </tbody>
+    </table>
+</div>
 {% else %}
-    <div class="oh-empty h-100">
-        <img src="{% static 'images/ui/search.svg' %}" class="oh-404__image" alt="Page not found. 404." />
-        <h1 class="oh-empty__title">{% trans "No Records found." %}</h1>
-        <p class="oh-empty__subtitle">{% trans "No pending attendance to validate." %}</p>
-    </div>
+<div class="attendance-empty">
+    <img src="{% static 'images/ui/search.svg' %}" alt="No records">
+    <p>{% trans "No pending attendance to validate." %}</p>
+</div>
 {% endif %}
+
 {% if validate_attendances.has_previous or validate_attendances.has_next %}
-    <div class="float-end mt-2">
-        {% if validate_attendances.has_previous %}
-            <span class="oh-card-dashboard__title" style="cursor: pointer"
-                hx-target="#attendanceValidateCardBody"
-                hx-get="{% url 'dashboard-validate-attendances' %}?page={{ validate_attendances.previous_page_number }}"
-                hx-trigger="click delay:0.3s">
-                <ion-icon name="caret-back-outline" role="img" class="md hydrated" aria-label="caret back outline"></ion-icon>
-            </span>
-        {% endif %}
-        {% if validate_attendances.has_next %}
-            <span class="oh-card-dashboard__title ms-2 float-end" style="cursor: pointer"
-                hx-target="#attendanceValidateCardBody"
-                hx-get="{% url 'dashboard-validate-attendances' %}?page={{ validate_attendances.next_page_number }}"
-                hx-trigger="click delay:0.3s">
-                <ion-icon name="caret-forward-outline" role="img" class="md hydrated"
-                    aria-label="caret back outline"></ion-icon>
-            </span>
-        {% endif %}
-        {% if validate_attendances.has_previous or validate_attendances.has_next %}
-            <span class="oh-pagination__page mt-1 fw-bold">
-                {% trans "Page" %} {{ validate_attendances.number }} {%trans "of" %}
-                {{validate_attendances.paginator.num_pages }}
-            </span>
-        {% endif %}
-    </div>
+<div class="attendance-pagination">
+    {% if validate_attendances.has_previous %}
+    <button class="attendance-page-btn"
+        hx-target="#attendanceValidateCardBody"
+        hx-get="{% url 'dashboard-validate-attendances' %}?page={{ validate_attendances.previous_page_number }}"
+        hx-trigger="click delay:0.3s">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    {% endif %}
+
+    <span>{{ validate_attendances.number }}/{{validate_attendances.paginator.num_pages }}</span>
+
+    {% if validate_attendances.has_next %}
+    <button class="attendance-page-btn"
+        hx-target="#attendanceValidateCardBody"
+        hx-get="{% url 'dashboard-validate-attendances' %}?page={{ validate_attendances.next_page_number }}"
+        hx-trigger="click delay:0.3s">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    {% endif %}
+</div>
 {% endif %}
+
+<style>
+.attendance-validate-wrapper {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: auto;
+    margin-bottom: 1.5rem;
+}
+
+.attendance-validate-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.attendance-validate-table th {
+    background: #f3f4f6;
+    color: #4b5563;
+    font-weight: 600;
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 2px solid #e5e7eb;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+}
+
+.attendance-validate-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+}
+
+.attendance-validate-table tr:hover {
+    background: #f9fafb;
+    cursor: pointer;
+}
+
+.attendance-employee-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.attendance-employee-info img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e7eb;
+}
+
+.attendance-employee-info span {
+    font-weight: 500;
+    color: #111827;
+}
+
+.attendance-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.attendance-validate-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #10b981;
+    color: white;
+}
+
+.attendance-validate-btn:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.attendance-validate-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.attendance-empty {
+    text-align: center;
+    padding: 48px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.attendance-empty img {
+    width: 140px;
+    margin-bottom: 24px;
+    opacity: 0.6;
+}
+
+.attendance-empty p {
+    color: #6b7280;
+    font-size: 15px;
+}
+
+.attendance-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 12px;
+}
+
+.attendance-page-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #4b5563;
+    transition: all 0.2s;
+}
+
+.attendance-page-btn:hover {
+    border-color: #d1d5db;
+    color: #111827;
+    background: #f9fafb;
+}
+
+.attendance-pagination span {
+    font-size: 14px;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+@media (max-width: 640px) {
+    .attendance-validate-table {
+        font-size: 12px;
+    }
+    
+    .attendance-validate-table td, 
+    .attendance-validate-table th {
+        padding: 12px;
+    }
+    
+    .attendance-employee-info img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .attendance-validate-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .attendance-page-btn {
+        width: 32px;
+        height: 32px;
+    }
+}
+</style>
