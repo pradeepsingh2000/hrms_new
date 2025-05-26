@@ -175,6 +175,26 @@ filter_mapping = {
 }
 
 
+@login_required
+def investment_data(request, employee_id):
+    """View for investment data"""
+    employee = Employee.objects.get(id=employee_id)
+    context = {
+        "employee": employee,
+    }
+    return render(request, "tabs/investment_data.html", context)
+
+@login_required
+def id_proof_data(request, employee_id):
+    """View for ID proof data"""
+    employee = Employee.objects.get(id=employee_id)
+    context = {
+        "employee": employee,
+    }
+    return render(request, "tabs/id_proof_data.html", context)
+
+
+
 def _check_reporting_manager(request, *args, **kwargs):
     if kwargs.get("obj_id"):
         obj_id = kwargs["obj_id"]
@@ -343,7 +363,9 @@ def employee_view_individual(request, obj_id, **kwargs):
                 previous_id = requests_ids[index - 1]
             break
 
+    employee_code = extract_code_from_employee(employee)
     context = {
+        "employee_code": employee_code,
         "employee": employee,
         "previous": previous_id,
         "next": next_id,
@@ -352,6 +374,7 @@ def employee_view_individual(request, obj_id, **kwargs):
         "leave_request_ids": json.dumps([]),
         "enabled_block_unblock": enabled_block_unblock,
     }
+    print(context,'the context')
     # if the requesting user opens own data
     if request.user.employee_get == employee:
         context["user_leaves"] = employee_leaves
@@ -363,6 +386,18 @@ def employee_view_individual(request, obj_id, **kwargs):
         "employee/view/individual.html",
         context,
     )
+
+def extract_code_from_employee(employee_obj):
+    # Convert the object to string (e.g., "Alex Martin (PEP0002)")
+    employee_str = str(employee_obj)
+    start = employee_str.find('(')
+    end = employee_str.find(')', start)
+
+    if start != -1 and end != -1:
+        code = employee_str[start + 1:end]  # Extract PEP0002
+        return code
+    return "-"
+
 
 
 @login_required

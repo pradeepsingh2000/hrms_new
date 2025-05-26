@@ -211,87 +211,126 @@
 			{% endif %}
 		</div>
 
-		<div class="row">
-			<div class="col-12 col-sm-12 col-md-12 col-lg-4">
-				<div class="d-flex align-items-center">
-					<div class="oh-profile oh-profile--lg me-3">
-						<div class="oh-profile__avatar">
-							<img src="{{employee.get_avatar}}" class="oh-profile-section__avatar"
-								style="border-radius: 10%;" alt="Username" {% if employee.employee_profile %}
-								onmouseover="enlargeImager(this)
-								$('#enlargeImageContainer').addClass('enlarge-image-container');" onmouseout="hideEnlargeImager()
-								$('#enlargeImageContainer').removeClass('enlarge-image-container');" {% endif %} />
-						</div>
-						{% if "attendance"|app_installed %}
-							{% if employee.check_online %}
-								<span class="oh-profile__active-badge oh-profile__active-badge--secondary"
-									style="background-color: yellowgreen;" title="{% trans 'Online' %}">
-								</span>
-							{% else %}
-								<span class="oh-profile__active-badge oh-profile__active-badge--secondary"
-									style="background-color: rgba(128, 128, 128, 0.482);" title="{% trans 'Offline' %}">
-								</span>
-							{% endif %}
-						{% endif %}
-					</div>
+		
 
-					<div class="oh-profile__info-container">
-						<h1 class="oh-profile__info-name">{{employee}}</h1>
-						<p class="oh-profile__info-designation">
-							{{employee.job_position_id}}
-						</p>
+
+
+
+<div class="row">
+	<div class="col-12">
+		<div class="row" style="background: white; padding-block: 24px; border-radius: 6px; margin-top: 20px;">
+			<div class="col-12 col-sm-12 col-md-2 col-lg-2 mb-4 mb-md-0">
+				<div class="d-flex w-100 h-100">
+					<div class="oh-profile oh-profile--lg w-100 h-100">
+						<div class="oh-profile__avatar w-100 h-100">
+							<img src="{{employee.get_avatar}}" class="oh-profile-section__avatar"
+								style=" width: 100%; height: 100%; object-fit: cover;" alt="{{employee}}" 
+								
+								/>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="col-12 col-sm-12 col-md-12 col-lg-8 d-flex align-items-center">
-				<ul class="oh-profile__info-list">
-					<li class="oh-profile__info-list-item">
-						<span class="oh-profile__info-label">
-							<ion-icon name="mail-outline"></ion-icon>
-							<span>{% trans "Work Email" %}:</span>
-						</span>
-						<span class="oh-profile__info-value">{{employee.employee_work_info.email}}</span>
-					</li>
+			<div class="col-12 col-sm-12 col-md-10 col-lg-10">
+				<div class="w-100">
+					<div class="mb-4">
+						<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-1">
+							<h1 class="oh-profile__info-name mb-1 mb-md-0" style="font-size: 20px; font-weight: 500;">{{employee|default:"Samanta Sengal"}}</h1>
+							<div class="d-flex align-items-center gap-2">
+								<!-- <button class="btn btn-primary d-flex align-items-center" style="background-color: #2196f3; border: none; padding: 4px 12px; font-size: 12px; border-radius: 4px;">
+									Actions <ion-icon name="chevron-down-outline" style="font-size: 12px; margin-left: 2px;"></ion-icon>
+								</button> -->
+								<div class="position-relative d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+									<svg class="position-absolute" width="60" height="60">
+										<circle cx="30" cy="30" r="25" fill="none" stroke="#e3f2fd" stroke-width="5"/>
+										<circle cx="30" cy="30" r="25" fill="none" stroke="#2196f3" stroke-width="5" 
+											stroke-dasharray="157" stroke-dashoffset="23.55"
+											transform="rotate(-90 30 30)"/>
+									</svg>
+									<div class="position-absolute d-flex flex-column align-items-center">
+										<span style="color: #2196f3; font-size: 14px; font-weight: 500;">85%</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="d-flex flex-column flex-md-row gap-2 gap-md-4">
+							<div class="d-flex align-items-center gap-1">
+								<ion-icon name="location-outline" style="color: #666; font-size: 12px; min-width: 16px;"></ion-icon>
+								<span style="color: #666; font-size: 12px;">{{employee.address|default:"-"}}</span>
+							</div>
+							<div class="d-flex align-items-center gap-1">
+								<ion-icon name="mail-outline" style="color: #666; font-size: 12px; min-width: 16px;"></ion-icon>
+								<span style="color: #666; font-size: 12px;">{{employee.email|default:"-"}}</span>
+							</div>
+							<div class="d-flex align-items-center gap-1">
+								<ion-icon name="call-outline" style="color: #666; font-size: 12px; min-width: 16px;"></ion-icon>
+								<span style="color: #666; font-size: 12px;">Work Phone: {{employee.employee_work_info.mobile | default:"-"}}</span>
+							</div>
+							<div class="d-flex align-items-center gap-1">
+								<ion-icon name="call-outline" style="color: #666; font-size: 12px; min-width: 16px;"></ion-icon>
+								<span class="oh-profile__info-value">{% if perms.employee.view_employee or request.user == employee.employee_user_id %}
+									{{employee.phone}}
+									{% else %}
+									**********
+									{% endif %}
+								</span>
+							</div>
+						</div>
+					</div>
+					<hr>
 
-					<li class="oh-profile__info-list-item">
-						<span class="oh-profile__info-label">
-							<ion-icon name="mail-outline"></ion-icon>
-							<span>{% trans "Email" %}:</span>
-						</span>
-						<span class="oh-profile__info-value">
-							{% if perms.employee.view_employee or request.user == employee.employee_user_id %}
-							{{employee.email}}
-							{% else %}
-							**********
-							{% endif %}
-						</span>
-					</li>
+					<div class="row g-3 mb-2">
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="mb-0" style="display: flex; flex-direction: column; align-items: flex-start;">
+								<p class="text-muted mb-1" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; color: #999 !important;">DESIGNATION</p>
+								<p class="mb-0" style="font-size: 12px; color: #444;">{{employee.employee_work_info.job_position_id|default:"-"}}</p>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="mb-0" style="display: flex; flex-direction: column; align-items: flex-start;">
+								<p class="text-muted mb-1" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; color: #999 !important;">DEPARTMENT</p>
+								<p class="mb-0" style="font-size: 12px; color: #444;">{{employee.employee_work_info.department_id|default:_("-")}}</p>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="mb-0" style="display: flex; flex-direction: column; align-items: flex-start;">
+								<p class="text-muted mb-1" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; color: #999 !important;">REPORTING TO</p>
+								<p class="mb-0" style="font-size: 12px; color: #444;">{{employee.employee_work_info.reporting_manager_id|default:"-"}}</p>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-md-3">
+							<div class="d-flex justify-content-between align-items-start w-100">
+								<div class="mb-0" style="display: flex; flex-direction: column; align-items: flex-start;">
+									<p class="text-muted mb-1" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; color: #999 !important;">EMPLOYEE NO</p>
+									<p class="mb-0" style="font-size: 12px; color: #444;">{{employee_code|default:"-"}}</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex justify-content-between align-items-center">
+					<div class="d-flex gap-2">
+						<ion-icon name="logo-linkedin" style="color: #1877F2; font-size: 18px; cursor: pointer; border-radius: 50%;"></ion-icon>
+						<ion-icon name="logo-facebook" style="color: #1877F2; font-size: 18px; cursor: pointer; border-radius: 50%;"></ion-icon>
+						<ion-icon name="logo-twitter" style="color: #1877F2; font-size: 18px; cursor: pointer; border-radius: 50%;"></ion-icon>
+						<ion-icon name="logo-skype" style="color: #1877F2; font-size: 18px; cursor: pointer; border-radius: 50%;"></ion-icon>
+						<ion-icon name="logo-github" style="color: black; font-size: 18px; cursor: pointer; border-radius: 50%;"></ion-icon>
 
-					<li class="oh-profile__info-list-item">
-						<span class="oh-profile__info-label">
-							<ion-icon name="call-outline"></ion-icon>
-							<span>{% trans "Work Phone" %}:</span>
-						</span>
-						<span class="oh-profile__info-value">{{employee.employee_work_info.mobile}}</span>
-					</li>
+					</div>
+					
+						<button class="btn btn-primary d-flex align-items-center" style="background-color: #2196f3; border: none; padding: 4px 12px; font-size: 12px; border-radius: 2px;">
+							Actions <ion-icon name="chevron-down-outline" style="font-size: 12px; margin-left: 2px;"></ion-icon>
+						</button>
+					
+				</div>
 
-					<li class="oh-profile__info-list-item">
-						<span class="oh-profile__info-label">
-							<ion-icon name="call-outline"></ion-icon>
-							<span>{% trans "Phone" %}:</span>
-						</span>
-						<span class="oh-profile__info-value">{% if perms.employee.view_employee or request.user == employee.employee_user_id %}
-							{{employee.phone}}
-							{% else %}
-							**********
-							{% endif %}
-						</span>
-					</li>
-				</ul>
+				</div>
 			</div>
 		</div>
-
+	</div>
+</div>
+		
 		<div class="oh-table_sticky--wrapper">
 			{% if request.user.is_superuser or request.user|check_manager:employee or request.user == employee.employee_user_id %}
 				<div class="oh-sticky-dropdown--header" style="border:none;">
@@ -328,6 +367,7 @@
 								</li>
 							{% endif %}
 
+							
 							{% if "attendance"|app_installed %}
 								{% if perms.attendance.view_attendance or request.user|check_manager:employee %}
 								<li data-cell-index="11" data-cell-title="{% trans 'Attendance' %}" class="oh-general__tab">
@@ -383,6 +423,8 @@
 								</li>
 							{% endif %}
 
+							
+
 							{% if "asset"|app_installed %}
 								{% if perms.asset.view_asset or request.user|check_manager:employee or request.user == employee.employee_user_id %}
 									<li data-cell-index="16" data-cell-title="{% trans 'Assets' %}" class="oh-general__tab">
@@ -425,6 +467,28 @@
 								</li>
 							{% endif %}
 
+							{% if "expense"|app_installed %}
+								{% if perms.expense.view_expense or request.user|check_manager:employee or request.user == employee.employee_user_id %}
+									<li data-cell-index="11" data-cell-title="{% trans 'Expense' %}" class="oh-general__tab">
+											<a href="#" class="oh-general__tab-link" data-action="general-tab"
+											data-target="#expense_target">{% trans "Expense" %}</a>
+									</li>
+
+									
+								{% endif %}
+							{% endif %}
+
+							<li data-cell-index="11" data-cell-title="{% trans 'Salary Revision' %}" class="oh-general__tab">
+								<a href="#" class="oh-general__tab-link" data-action="general-tab"
+								data-target="#salary_revision_target">{% trans "Salary Revision" %}</a>
+						</li>
+
+							{% if perms.employee.view_historicalemployeeworkinformation or request.user|check_manager:employee %}
+								<li data-cell-index="15" data-cell-title="{% trans 'History' %}" class="oh-general__tab">
+									<a href="#" class="oh-general__tab-link" data-action="general-tab"
+										data-target="#history">{% trans "History" %}</a>
+								</li>
+							{% endif %}
 							{% if perms.horilla_documents.view_document or request.user == employee.employee_user_id %}
 								<li data-cell-index="20" data-cell-title="{% trans 'Documents' %}" class="oh-general__tab">
 									<a hx-get="{% url 'document-tab' employee.id %}?employee_view=true"
@@ -434,6 +498,12 @@
 									</a>
 								</li>
 							{% endif %}
+
+							<li data-cell-index="21" data-cell-title="{% trans 'Investment & ID Proof' %}" class="oh-general__tab">
+								<a data-action="general-tab" data-target="#investment_proof_target" class="oh-general__tab-link" role="button">
+									{% trans "Investment & ID Proof" %}
+								</a>
+							</li>
 
 							{% if perms.employee.view_employee %}
 							<li class="oh-general__tab" data-cell-index="22" data-cell-title="{% trans 'Mail Log' %}">
@@ -452,6 +522,10 @@
 									</li>
 								{% endif %}
 							{% endif %}
+
+							
+
+
 						</ul>
 						<button
 							hx-get={% url 'bonus-points-tab' employee.id %} hx-target="#bonus_points_target" id="bonus-tab-button" hidden>
@@ -474,6 +548,8 @@
 						{% if "payroll"|app_installed %}
 							<div class="oh-general__tab-target oh-profile__info-tab mb-4 d-none" id="allowance_deduction"> </div>
 						{% endif %}
+
+							<div class="oh-general__tab-target oh-profile__info-tab mb-4 d-none" id="investment_proof_target"> </div>
 
 						{% if "attendance"|app_installed %}
 							<div class="oh-general__tab-target oh-profile__info-tab mb-4 d-none" id="attendance_target"> </div>
@@ -516,6 +592,22 @@
 						{% if "leave"|app_installed %}
 						<div class="oh-general__tab-target oh-profile__info-tab mb-4 d-none" id="leave"></div>
 						{% endif %}
+
+						{% if "expense"|app_installed %}
+						<div class="oh-general__tab-target oh-profile__info-tab mb-4 d-none" id="expense_target">
+							{% include "tabs/expense-tab.html" %}
+						</div>
+						{% endif %}
+
+							
+
+						<div class="oh-general__tab-target oh-profile__info-tab mb-4 d-none" id="investment_proof_target">
+							{% include "tabs/investment-proof.html" %}
+						</div>
+
+						<div class="oh-general__tab-target oh-profile__info-tab mb-4 d-none" id="salary_revision_target">
+							{% include "tabs/salary-revision.html" %}
+						</div>
 					</div>
 				</div>
 			</div>

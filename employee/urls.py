@@ -118,6 +118,16 @@ urlpatterns = [
         name="employee-account-block-unblock",
     ),
     path(
+        "investment-data/<int:employee_id>/",
+        views.investment_data,
+        name="investment-data",
+    ),
+    path(
+        "id-proof-data/<int:employee_id>/",
+        views.id_proof_data,
+        name="id-proof-data",
+    ),
+    path(
         "employee-bulk-delete", views.employee_bulk_delete, name="employee-bulk-delete"
     ),
     path(

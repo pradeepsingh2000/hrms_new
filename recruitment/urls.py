@@ -704,4 +704,6 @@ urlpatterns = [
     path(
         "val-linkedin/<int:pk>/", linkedin.validate_linkedin_token, name="val-linkedin"
     ),
+    path('interview/events/', views.interview_events_api, name='interview-events-api'),
+
 ]

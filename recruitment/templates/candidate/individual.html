@@ -70,56 +70,9 @@
 
 <div class="oh-wrapper" id="section">
   <div class="oh-card mt-4 mb-5">
-    <div class="d-flex flex-row-reverse align-items-center">
-
-      {% if next != None %}
-        <a
-          href="{% url 'candidate-view-individual' next %}" title='{% trans "Next Candidate" %}' style="color:hsl(8, 77%, 56%);" class="ms-1 me-3 fw-bold"
-          >
-          <ion-icon name="arrow-forward-circle-outline" style="font-size:35px;"></ion-icon>
-        </a>
-      {% else %}
-        <a
-          href="#" style="color:hsl(8 50% 83% / 1);" class="ms-1 me-3 fw-bold oh-btn--disabled"
-          >
-          <ion-icon name="arrow-forward-circle-outline" style="font-size:35px;"></ion-icon>
-        </a>
-      {% endif %}
-
-    {% if previous != None %}
-      <a
-        href="{% url 'candidate-view-individual' previous %}" title="{% trans 'Previous Candidate' %}" style="color:hsl(8, 77%, 56%);" class="ms-1 me-2 fw-bold"
-        >
-        <ion-icon name="arrow-back-circle-outline" style="font-size:35px;"></ion-icon>
-      </a>
-    {% else %}
-      <a
-        href="#" style="color:hsl(8 50% 83% / 1);" class="ms-1 me-2 fw-bold oh-btn--disabled"
-        >
-        <ion-icon name="arrow-back-circle-outline" style="font-size:35px;"></ion-icon>
-      </a>
-    {% endif %}
-    {% if perms.recruitment.chanage_candidate %}
-      <a href="{% url 'rec-candidate-update' candidate.id %}" class="mt-1 mb-1 m-3">
-        <img src="{% static "/images/ui/edit_btn.png" %}" style="width: 25px; height: auto;" title="{% trans 'Edit' %}">
-      </a>
-    {% endif %}
-      {% if perms.recruitment.change_candidate %}
-        <div class='d-flex float-end ms-4'>
-          {% if not candidate.email in emp_list and not candidate.start_onboard %}
-            <form action="{% url 'candidate-conversion' candidate.id %}" style="color: inherit;text-decoration: none;"
-              onsubmit="return confirm('{% trans "Are you sure you want to convert this candidate into an employee?" %}')"
-              >
-              {% csrf_token %}
-              <button type='submit' class="oh-btn oh-btn--success"style="border-radius:18px; "> {% trans "Convert To Employee" %}</button>
-            </form>
-          {% endif %}
-        </div>
-      {% endif %}
-
-    </div>
-    <div class="row">
-      <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+      
+    <div class="row mt-3">
+      <div class="col-12 col-sm-12 col-md-12 col-lg-2">
         <div class="d-flex align-items-center">
           <div class="oh-profile oh-profile--lg me-3">
             <div class="oh-profile__avatar">
@@ -128,12 +81,7 @@
                 class="oh-profile-section__avatar preview"
                 alt="Username"
                 style="border-radius:10%"
-                onmouseover="showImage(this)
-                  $('#showImageContainer').addClass('enlarge-image-container');
-                "
-                onmouseout="hideshowImage()
-                  $('#showImageContainer').removeClass('enlarge-image-container');
-                "
+                
               />
             </div>
             <span
@@ -143,47 +91,212 @@
           </div>
           <div class="oh-profile__info-container">
             <h1 class="oh-profile__info-name">{{candidate}}</h1>
-            <p class="oh-profile__info-designation">
+            <!-- <p class="oh-profile__info-designation">
               {{candidate.job_position_id}}
-            </p>
+            </p> -->
           </div>
         </div>
       </div>
-      <div
+      <!-- <div
         class="col-12 col-sm-12 col-md-12 col-lg-8 d-flex align-items-center justify-content-between"
       >
-        <ul class="oh-profile__info-list">
-          <li class="oh-profile__info-list-item">
-            <span class="oh-profile__info-label">
-              <ion-icon name="mail-outline"></ion-icon>
-              <span>{% trans "Email" %}:</span>
-            </span>
-            <span class="oh-profile__info-value">{{candidate.email}}</span>
-          </li>
-
-          <li class="oh-profile__info-list-item">
-            <span class="oh-profile__info-label">
-              <ion-icon name="call-outline"></ion-icon>
-              <span>{% trans "Phone" %}:</span>
-            </span>
-            <span class="oh-profile__info-value">{{candidate.mobile}}</span>
-          </li>
-        </ul>
+      <div class="container">
+        <div class="row g-3"> 
+      
+          <div class="col-md-6">
+            <div class="d-flex">
+              <span class="me-2">
+                <ion-icon name="mail-outline"></ion-icon>
+              </span>
+              <div>
+                <strong>{% trans "Email" %}:</strong>
+                <div>{{ candidate.email }}</div>
+              </div>
+            </div>
+          </div>
+      
+          <div class="col-md-6">
+            <div class="d-flex">
+              <span class="me-2">
+                <ion-icon name="call-outline"></ion-icon>
+              </span>
+              <div>
+                <strong>{% trans "Phone" %}:</strong>
+                <div>{{ candidate.mobile }}</div>
+              </div>
+            </div>
+          </div>
+      
+          <div class="col-md-6">
+            <div class="d-flex">
+              <span class="me-2">
+                <ion-icon name="briefcase-outline"></ion-icon>
+              </span>
+              <div>
+                <strong>{% trans "Job Position" %}:</strong>
+                <div>{{ candidate.job_position_id }}</div>
+              </div>
+            </div>
+          </div>
+      
+          <div class="col-md-6">
+            <div class="d-flex">
+              <span class="me-2">
+                <ion-icon name="business-outline"></ion-icon>
+              </span>
+              <div>
+                <strong>{% trans "Department" %}:</strong>
+                <div>{{ candidate.job_position_id.department_id }}</div>
+              </div>
+            </div>
+          </div>
+      
+        </div>
+      </div>
+      
+      <div>
         {% with request.user.employee_get.candidate_rating.all as candidate_ratings  %}
-            <form >
+        <form >
+          <div class="d-block mb-0">
+            <div class="oh-rate" style="pointer-events:none;">
+              {% for i in "54321" %}
+              <input type="radio" id="star{{i}}{{cand.id}}" name="rating" class="rating-radio" value="{{i}}" disabled {% if candidate.candidate_rating.all|avg_rating:candidate == i %} checked {% endif %} />
+              <label for="star{{i}}{{cand.id}}" >5 {% trans "Stars" %}</label>
+              {% endfor %}
+            </div>
+            <span id="rating-radio-error"></span>
+          </div>
+        </form>
+      {% endwith %}
+      </div>
+    
+      </div> -->
+
+      <div class="col-12 col-sm-12 col-md-12 col-lg-6 d-flex align-items-start justify-content-between">
+        <div class="container">
+          <!-- Grid Row -->
+          <div class="row g-3 mb-3 p-2">
+            <!-- Email -->
+            <div class="col-md-6">
+              <div class="d-flex">
+                <span class="me-2">
+                  <ion-icon name="mail-outline"></ion-icon>
+                </span>
+                <div>
+                  <strong>{% trans "Email" %}:</strong>
+                  <div>{{ candidate.email }}</div>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Phone -->
+            <div class="col-md-6">
+              <div class="d-flex">
+                <span class="me-2">
+                  <ion-icon name="call-outline"></ion-icon>
+                </span>
+                <div>
+                  <strong>{% trans "Phone" %}:</strong>
+                  <div>{{ candidate.mobile }}</div>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Job Position -->
+            <div class="col-md-6">
+              <div class="d-flex">
+                <span class="me-2">
+                  <ion-icon name="briefcase-outline"></ion-icon>
+                </span>
+                <div>
+                  <strong>{% trans "Job Position" %}:</strong>
+                  <div>{{ candidate.job_position_id }}</div>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Department -->
+            <div class="col-md-6">
+              <div class="d-flex">
+                <span class="me-2">
+                  <ion-icon name="business-outline"></ion-icon>
+                </span>
+                <div>
+                  <strong>{% trans "Department" %}:</strong>
+                  <div>{{ candidate.job_position_id.department_id }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- ⭐ Star Rating Block -->
+          {% with request.user.employee_get.candidate_rating.all as candidate_ratings %}
+            <form>
               <div class="d-block mb-0">
                 <div class="oh-rate" style="pointer-events:none;">
                   {% for i in "54321" %}
-                  <input type="radio" id="star{{i}}{{cand.id}}" name="rating" class="rating-radio" value="{{i}}" disabled {% if candidate.candidate_rating.all|avg_rating:candidate == i %} checked {% endif %} />
-                  <label for="star{{i}}{{cand.id}}" >5 {% trans "Stars" %}</label>
+                    <input type="radio" id="star{{i}}{{cand.id}}" name="rating" class="rating-radio" value="{{i}}" disabled {% if candidate.candidate_rating.all|avg_rating:candidate == i %} checked {% endif %} />
+                    <label for="star{{i}}{{cand.id}}">{{ i }} {% trans "Stars" %}</label>
                   {% endfor %}
                 </div>
                 <span id="rating-radio-error"></span>
               </div>
             </form>
           {% endwith %}
+        </div>
+      </div> 
+      <div class="col-12 col-sm-12 col-md-12 col-lg-4">
+        <div class="d-flex flex-row-reverse align-items-center">
+
+          {% if next != None %}
+            <a
+              href="{% url 'candidate-view-individual' next %}" title='{% trans "Next Candidate" %}' style="color:hsl(8, 77%, 56%);" class="ms-1 me-3 fw-bold"
+              >
+              <ion-icon name="arrow-forward-circle-outline" style="font-size:35px;"></ion-icon>
+            </a>
+          {% else %}
+            <a
+              href="#" style="color:hsl(8 50% 83% / 1);" class="ms-1 me-3 fw-bold oh-btn--disabled"
+              >
+              <ion-icon name="arrow-forward-circle-outline" style="font-size:35px;"></ion-icon>
+            </a>
+          {% endif %}
+  
+        {% if previous != None %}
+          <a
+            href="{% url 'candidate-view-individual' previous %}" title="{% trans 'Previous Candidate' %}" style="color:hsl(8, 77%, 56%);" class="ms-1 me-2 fw-bold"
+            >
+            <ion-icon name="arrow-back-circle-outline" style="font-size:35px;"></ion-icon>
+          </a>
+        {% else %}
+          <a
+            href="#" style="color:hsl(8 50% 83% / 1);" class="ms-1 me-2 fw-bold oh-btn--disabled"
+            >
+            <ion-icon name="arrow-back-circle-outline" style="font-size:35px;"></ion-icon>
+          </a>
+        {% endif %}
+        {% if perms.recruitment.chanage_candidate %}
+          <a href="{% url 'rec-candidate-update' candidate.id %}" class="mt-1 mb-1 m-3">
+            <img src="{% static "/images/ui/edit_btn.png" %}" style="width: 25px; height: auto;" title="{% trans 'Edit' %}">
+          </a>
+        {% endif %}
+          {% if perms.recruitment.change_candidate %}
+            <div class='d-flex float-end ms-4'>
+              {% if not candidate.email in emp_list and not candidate.start_onboard %}
+                <form action="{% url 'candidate-conversion' candidate.id %}" style="color: inherit;text-decoration: none;"
+                  onsubmit="return confirm('{% trans "Are you sure you want to convert this candidate into an employee?" %}')"
+                  >
+                  {% csrf_token %}
+                  <button type='submit' class="oh-btn oh-btn--success"style="border-radius:18px; "> {% trans "Convert To Employee" %}</button>
+                </form>
+              {% endif %}
+            </div>
+          {% endif %}
+  
+        </div>
       </div>
     </div>
+    
     <div class="row">
       <div class="col-sm-12 col-md-12 col lg-12">
         <ul

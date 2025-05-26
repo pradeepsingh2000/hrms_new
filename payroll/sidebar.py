@@ -30,6 +30,11 @@ SUBMENUS = [
         "redirect": reverse("view-deduction"),
         "accessibility": "payroll.sidebar.deduction_accessibility",
     },
+     {
+        "menu": trans("Generate Payroll"),
+        "redirect": reverse("view-payroll-dashboard"),
+        "accessibility": "payroll.sidebar.loan_accessibility",
+    },
     {
         "menu": trans("Payslips"),
         "redirect": reverse("view-payslip"),

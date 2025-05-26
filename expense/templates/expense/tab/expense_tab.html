@@ -1,0 +1,89 @@
+{% load i18n %}
+{% load static %}
+
+
+<div>
+    Expense Tab
+</div>
+<!-- <div class="oh-wrapper">
+    <div class="oh-card">
+        <div class="oh-card__header d-flex justify-content-between">
+            <h5 class="oh-card__title">{% trans "Expenses" %}</h5>
+            {% if perms.expense.add_expense or request.user|check_manager:employee or request.user == employee %}
+            <button class="oh-btn oh-btn--primary" 
+                    data-toggle="oh-modal-toggle" 
+                    data-target="#expenseCreateModal"
+                    hx-get="{% url 'expense-create' %}"
+                    hx-target="#expenseCreateModalTarget">
+                {% trans "Add Expense" %}
+            </button>
+            {% endif %}
+        </div>
+        <div class="oh-card__body">
+            {% if expenses %}
+            <div class="oh-sticky-table">
+                <div class="oh-sticky-table__table">
+                    <div class="oh-sticky-table__thead">
+                        <div class="oh-sticky-table__tr">
+                            <div class="oh-sticky-table__th">{% trans "Date" %}</div>
+                            <div class="oh-sticky-table__th">{% trans "Type" %}</div>
+                            <div class="oh-sticky-table__th">{% trans "Description" %}</div>
+                            <div class="oh-sticky-table__th">{% trans "Amount" %}</div>
+                            <div class="oh-sticky-table__th">{% trans "Status" %}</div>
+                            <div class="oh-sticky-table__th">{% trans "Actions" %}</div>
+                        </div>
+                    </div>
+                    <div class="oh-sticky-table__tbody">
+                        {% for expense in expenses %}
+                        <div class="oh-sticky-table__tr">
+                            <div class="oh-sticky-table__td">{{ expense.date }}</div>
+                            <div class="oh-sticky-table__td">{{ expense.expense_type }}</div>
+                            <div class="oh-sticky-table__td">{{ expense.description }}</div>
+                            <div class="oh-sticky-table__td">{{ expense.amount }}</div>
+                            <div class="oh-sticky-table__td">{{ expense.get_status_display }}</div>
+                            <div class="oh-sticky-table__td">
+                                {% if perms.expense.change_expense or request.user|check_manager:employee %}
+                                <button class="oh-btn oh-btn--secondary oh-btn--small"
+                                        data-toggle="oh-modal-toggle" 
+                                        data-target="#expenseUpdateModal"
+                                        hx-get="{% url 'expense-update' expense.id %}"
+                                        hx-target="#expenseUpdateModalTarget">
+                                    {% trans "Edit" %}
+                                </button>
+                                {% endif %}
+                                {% if perms.expense.delete_expense or request.user|check_manager:employee %}
+                                <button class="oh-btn oh-btn--danger oh-btn--small"
+                                        onclick="return confirm('{% trans "Are you sure you want to delete this expense?" %}')"
+                                        hx-get="{% url 'expense-delete' expense.id %}"
+                                        hx-confirm="{% trans 'Are you sure you want to delete this expense?' %}">
+                                    {% trans "Delete" %}
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="oh-alert oh-alert--warning">
+                {% trans "No expenses found." %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div> -->
+
+<!-- Create Modal -->
+<!-- <div class="oh-modal" id="expenseCreateModal">
+    <div class="oh-modal__dialog">
+        <div class="oh-modal__content" id="expenseCreateModalTarget"></div>
+    </div>
+</div> -->
+
+<!-- Update Modal -->
+<!-- <div class="oh-modal" id="expenseUpdateModal">
+    <div class="oh-modal__dialog">
+        <div class="oh-modal__content" id="expenseUpdateModalTarget"></div>
+    </div>
+</div>  -->

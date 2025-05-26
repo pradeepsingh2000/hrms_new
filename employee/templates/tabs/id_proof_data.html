@@ -1,0 +1,48 @@
+{% load i18n %}
+{% load static %}
+
+<div class="oh-wrapper">
+    <div class="oh-card">
+        <div class="oh-card__header d-flex justify-content-between">
+            <h5 class="oh-card__title">{% trans "ID Proof Documents" %}</h5>
+            <button class="oh-btn oh-btn--primary" 
+                    data-toggle="oh-modal-toggle" 
+                    data-target="#addIdProofModal">
+                {% trans "Add ID Proof" %}
+            </button>
+        </div>
+        <div class="oh-card__body">
+            <div class="oh-sticky-table">
+                <div class="oh-sticky-table__table">
+                    <div class="oh-sticky-table__thead">
+                        <div class="oh-sticky-table__tr">
+                            <div class="oh-sticky-table__th">{% trans "Document Type" %}</div>
+                            <div class="oh-sticky-table__th">{% trans "Document Number" %}</div>
+                            <div class="oh-sticky-table__th">{% trans "Valid Until" %}</div>
+                            <div class="oh-sticky-table__th">{% trans "Document" %}</div>
+                            <div class="oh-sticky-table__th">{% trans "Actions" %}</div>
+                        </div>
+                    </div>
+                    <div class="oh-sticky-table__tbody">
+                        <!-- Sample row - replace with actual data -->
+                        <div class="oh-sticky-table__tr">
+                            <div class="oh-sticky-table__td">Passport</div>
+                            <div class="oh-sticky-table__td">P1234567</div>
+                            <div class="oh-sticky-table__td">2029-01-15</div>
+                            <div class="oh-sticky-table__td">
+                                <a href="#" class="oh-btn oh-btn--light oh-btn--small">
+                                    {% trans "View" %}
+                                </a>
+                            </div>
+                            <div class="oh-sticky-table__td">
+                                <button class="oh-btn oh-btn--danger oh-btn--small">
+                                    {% trans "Delete" %}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

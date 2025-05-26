@@ -1,7 +1,7 @@
 {% load i18n %}{% load static recruitmentfilters %}
 <section
 class="oh-wrapper oh-main__topbar"
-x-data="{searchShow: false}"
+x-data="{searchShow: false, calendarOpen: false}"
 >
 <div class="oh-main__titlebar oh-main__titlebar--left">
   <h1 class="oh-main__titlebar-title fw-bold">
@@ -28,6 +28,19 @@ x-data="{searchShow: false}"
       onkeyup="$('.filterButton')[0].click()"
     />
   </div>
+  <button 
+    class="oh-btn oh-btn--secondary ml-2 mr-2" 
+    data-toggle="oh-modal-toggle" 
+    data-target="#calendarModal"
+    style="background-color: white; height: 40px;">
+    <ion-icon 
+      name="calendar-outline" 
+      class="md hydrated" 
+      role="img" 
+      aria-label="calendar outline"
+      style="color: #1077DA; font-size: 20px;">
+    </ion-icon>
+  </button>
   <div class="oh-dropdown" x-data="{open: false}">
     <button
       class="oh-btn ml-2"
@@ -106,6 +119,222 @@ x-data="{searchShow: false}"
   </div>
 </form>
 </section>
+
+<!-- Calendar Modal Structure -->
+<div class="oh-modal" id="calendarModal" role="dialog" aria-labelledby="calendarModalLabel" aria-hidden="true">
+    <div class="oh-modal__dialog oh-modal__dialog--lg">
+        <div class="oh-modal__content" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);">
+            <div class="oh-modal__header" style="border-bottom: 1px solid #eee; padding: 1.25rem;">
+                <h5 class="oh-modal__title" id="calendarModalLabel" style="font-size: 1.25rem; font-weight: 600;">{% trans "Interview Calendar" %}</h5>
+                <button class="oh-modal__close" data-dismiss="modal" aria-label="Close" style="background: none; border: none; padding: 8px; border-radius: 50%; transition: all 0.2s; cursor: pointer;">
+                    <ion-icon name="close-outline" style="font-size: 24px;"></ion-icon>
+                </button>
+            </div>
+            <div class="oh-modal__body" style="padding: 1.5rem;">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Calendar Modal Styles */
+.oh-modal--show .oh-modal__dialog {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.oh-modal__dialog {
+    transform: scale(0.95);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.oh-modal__close:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* Calendar Styles */
+.fc {
+    font-family: inherit;
+}
+
+.fc .fc-toolbar {
+    padding: 1rem;
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.fc .fc-button {
+    border-radius: 6px;
+    box-shadow: none;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s;
+}
+
+.fc .fc-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.fc .fc-day-today {
+    background-color: rgba(0,120,255,0.05) !important;
+}
+
+.fc-event {
+    border-radius: 4px;
+    padding: 2px 4px;
+    transition: all 0.2s;
+}
+
+.fc-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Animation for modal */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.oh-modal--show .oh-modal__content {
+    animation: modalFadeIn 0.3s ease forwards;
+}
+
+/* Calendar Button Colors */
+.fc .fc-button-primary {
+    background-color: #1077DA !important;
+    border-color: #1077DA !important;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: #0d62b3 !important;
+    border-color: #0d62b3 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 119, 218, 0.2);
+}
+
+.fc .fc-button-primary:disabled {
+    background-color: #1077DA !important;
+    border-color: #1077DA !important;
+    opacity: 0.65;
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+    background-color: #0d62b3 !important;
+    border-color: #0d62b3 !important;
+}
+
+/* Today button specific style */
+.fc .fc-button-primary.fc-today-button {
+    background-color: #1077DA !important;
+    border-color: #1077DA !important;
+}
+
+.fc .fc-button-primary.fc-today-button:hover {
+    background-color: #0d62b3 !important;
+    border-color: #0d62b3 !important;
+}
+
+/* Calendar highlight color for today */
+.fc .fc-day-today {
+    background-color: rgba(16, 119, 218, 0.05) !important;
+}
+
+/* Event colors */
+.fc-event {
+    border-color: #1077DA !important;
+    background-color: #1077DA !important;
+}
+</style>
+
+<div id="calendarTarget"></div>
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.js'></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let calendar = null;
+
+    // Initialize calendar when modal is opened
+    $(document).on('shown.oh.modal', '#calendarModal', function () {
+        var calendarEl = document.getElementById('calendar');
+        if (!calendar) {
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: ''
+                },
+                events: '{% url "interview-events-api" %}',  // Use the Django API endpoint
+                eventDidMount: function(info) {
+                    // Add tooltip with status
+                    info.el.title = info.event.title +'-'+info.event.extendedProps.candidate_name
+                }
+            });
+            
+            calendar.render();
+            
+            // Update size after a small delay to ensure modal is fully visible
+            setTimeout(function() {
+                calendar.updateSize();
+            }, 100);
+        } else {
+            calendar.refetchEvents(); // Refresh events if calendar already exists
+        }
+    });
+
+    // Clean up calendar when modal is closed
+    $(document).on('hidden.oh.modal', '#calendarModal', function () {
+        if (calendar) {
+            calendar.destroy();
+            calendar = null;
+        }
+    });
+});
+
+// Add modal toggle functionality
+document.addEventListener('click', function(e) {
+    if (e.target.matches('[data-toggle="oh-modal-toggle"]') || e.target.closest('[data-toggle="oh-modal-toggle"]')) {
+        e.preventDefault();
+        const button = e.target.matches('[data-toggle="oh-modal-toggle"]') ? 
+                      e.target : 
+                      e.target.closest('[data-toggle="oh-modal-toggle"]');
+        const targetId = button.getAttribute('data-target');
+        const modal = document.querySelector(targetId);
+        
+        if (modal) {
+            modal.classList.add('oh-modal--show');
+            // Trigger shown event
+            $(modal).trigger('shown.oh.modal');
+        }
+    }
+    
+    if (e.target.matches('[data-dismiss="modal"]') || e.target.closest('[data-dismiss="modal"]')) {
+        e.preventDefault();
+        const modal = e.target.closest('.oh-modal');
+        if (modal) {
+            modal.classList.remove('oh-modal--show');
+            // Trigger hidden event
+            $(modal).trigger('hidden.oh.modal');
+        }
+    }
+});
+</script>
+
 <script>
   $(document).ready(function () {
     function candidateFilter(element) {

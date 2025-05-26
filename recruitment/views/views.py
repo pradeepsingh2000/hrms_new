@@ -119,6 +119,7 @@ from recruitment.models import (
 )
 from recruitment.views.linkedin import delete_post, post_recruitment_in_linkedin
 from recruitment.views.paginator_qry import paginator_qry
+import datetime
 
 
 def is_stagemanager(request, stage_id=False):
@@ -1442,6 +1443,7 @@ def interview_filter_view(request):
     data_dict = parse_qs(previous_data)
     get_key_instances(InterviewSchedule, data_dict)
     now = timezone.now()
+    print(page_obj,'the page obj')
     return render(
         request,
         "candidate/interview_list.html",
@@ -1452,6 +1454,63 @@ def interview_filter_view(request):
             "now": now,
         },
     )
+
+
+
+
+@login_required
+def interview_events_api(request):
+    # Use full model instances to avoid field issues
+    if request.user.has_perm("recruitment.view_interviewschedule"):
+        interviews = InterviewSchedule.objects.select_related("candidate_id").all()
+    else:
+        interviews = InterviewSchedule.objects.select_related("candidate_id").filter(
+            employee_id=request.user.employee_get.id
+        ).order_by("-interview_date")
+
+    events = []
+
+    for interview in interviews:
+        print(interview.candidate_id,'the candidate id')
+        # Combine date and time into one datetime
+        scheduled_dt = None
+        if interview.interview_date and interview.interview_time:
+            scheduled_dt = datetime.datetime.combine(
+                interview.interview_date,
+                interview.interview_time
+            ).isoformat()
+        
+        candidate_name = (
+            interview.candidate_id.name
+            if interview.candidate_id and hasattr(interview.candidate_id, 'full_name')
+            else "No Candidate"
+        )
+
+        events.append({
+            "title": interview.description,
+            "start": scheduled_dt,
+            "color": "#3788d8",
+            "candidate_name": interview.candidate_id.name,  # ✅ added here
+            "extendedProps": {
+               "candidate": interview.candidate_id.name,     # ✅ optionally updated
+               "description": interview.description,
+               "completed": interview.completed,
+            }
+        })
+
+    return JsonResponse(events, safe=False)
+
+
+def get_color_by_status(status):
+    if status == "Completed":
+        return "#28a745"
+    elif status == "Expired":
+        return "#dc3545"
+    elif status == "Upcoming":
+        return "#ffc107"
+    elif status == "Today":
+        return "#007bff"
+    return "#6c757d"
 
 
 @login_required
@@ -1474,7 +1533,7 @@ def interview_view(request):
     previous_data = request.GET.urlencode()
     template = "candidate/interview_view.html"
     now = timezone.now()
-
+    print(page_obj,'the page obj1',previous_data)
     return render(
         request,
         template,

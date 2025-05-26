@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "django_apscheduler",
     "newReport",
+    "expense",
 ]
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 

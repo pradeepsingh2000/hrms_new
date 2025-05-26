@@ -1,0 +1,67 @@
+{% load i18n %}
+{% load static %}
+
+<div class="oh-wrapper">
+    <div class="oh-card">
+        <div class="oh-card__header">
+            <div class="oh-tabs">
+                <div class="oh-tabs__tablist" role="tablist">
+                    <button class="oh-tabs__tab oh-tabs__tab--active" 
+                            data-tab="investment" 
+                            role="tab"
+                            hx-get="{% url 'investment-data' employee.id %}"
+                            hx-target="#investmentPanel"
+                            hx-trigger="click, load">
+                        {% trans "Investment" %}
+                    </button>
+                    <button class="oh-tabs__tab" 
+                            data-tab="id-proof" 
+                            role="tab"
+                            hx-get="{% url 'id-proof-data' employee.id %}"
+                            hx-target="#idProofPanel"
+                            hx-trigger="click">
+                        {% trans "ID Proof" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="oh-card__body">
+            <div id="investmentPanel">
+                <!-- Investment data will be loaded here -->
+            </div>
+            <div id="idProofPanel" class="d-none">
+                <!-- ID proof data will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('[data-tab]');
+        const panels = ['investmentPanel', 'idProofPanel'];
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('oh-tabs__tab--active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('oh-tabs__tab--active');
+                
+                // Show/hide panels
+                panels.forEach(panelId => {
+                    const panel = document.getElementById(panelId);
+                    if (panel) {
+                        if (tab.dataset.tab === 'investment' && panelId === 'investmentPanel' ||
+                            tab.dataset.tab === 'id-proof' && panelId === 'idProofPanel') {
+                            panel.classList.remove('d-none');
+                        } else {
+                            panel.classList.add('d-none');
+                        }
+                    }
+                });
+            });
+        });
+    });
+</script> 

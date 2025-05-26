@@ -2,15 +2,338 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Reports</h3>
+<div class="reports-container">
+    <div class="reports-header">
+        <h2>All Reports</h2>
+    </div>
+    
+    <div class="reports-grid">
+        <!-- Payroll Overview -->
+        <div class="report-card">
+            <div class="report-header">
+                <h3>
+                    <svg class="header-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 2V8H20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Payroll Overview
+                </h3>
+            </div>
+            <div class="report-items">
+                <div class="report-item">
+                    <span>Monthly Salary Register</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Employee-wise Pay Summary</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Net Pay Disbursement Summary</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <h4>Welcome to Reports Section</h4>
-            <p>This is your report viewing page.</p>
+
+        <!-- Employee Reports -->
+        <div class="report-card">
+            <div class="report-header">
+                <h3>
+                    <svg class="header-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 2V8H20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Employee Reports
+                </h3>
+            </div>
+            <div class="report-items">
+                <div class="report-item">
+                    <span>Employee CTC Details</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Employee Personal Report</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Employee Exit/Termination Summary</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deduction & Benefits -->
+        <div class="report-card">
+            <div class="report-header">
+                <h3>
+                    <svg class="header-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 2V8H20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Deduction & Benefits
+                </h3>
+            </div>
+            <div class="report-items">
+                <div class="report-item">
+                    <span>Total Deductions Summary</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>PF/ESI Deduction Breakdown</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Gratuity Eligibility Report</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loan Reports -->
+        <div class="report-card">
+            <div class="report-header">
+                <h3>
+                    <svg class="header-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 2V8H20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Loan Reports
+                </h3>
+            </div>
+            <div class="report-items">
+                <div class="report-item">
+                    <span>Loan Outstanding Summary</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Loan Closure & Write-off Report</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Loan Projection by Month</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance & Shift Reports -->
+        <div class="report-card">
+            <div class="report-header">
+                <h3>
+                    <svg class="header-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 2V8H20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Attendance & Shift Reports
+                </h3>
+            </div>
+            <div class="report-items">
+                <div class="report-item">
+                    <span>Daily Attendance Report</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Monthly Shift-wise Attendance</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Leave Balance & Usage Report</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Claims & Reimbursements -->
+        <div class="report-card">
+            <div class="report-header">
+                <h3>
+                    <svg class="header-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 2V8H20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Claims & Reimbursements
+                </h3>
+            </div>
+            <div class="report-items">
+                <div class="report-item">
+                    <span>Claims Reimbursement Summary</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Pending Claims & Payouts</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bonus & Gratuity -->
+        <div class="report-card">
+            <div class="report-header">
+                <h3>
+                    <svg class="header-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 2V8H20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Bonus & Gratuity Reports
+                </h3>
+            </div>
+            <div class="report-items">
+                <div class="report-item">
+                    <span>Bonus Disbursal Summary</span>
+                    <span class="arrow">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journal & Audit Logs -->
+        <div class="report-card">
+            <div class="report-header">
+                <h3>
+                    <svg class="header-icon" viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 2V8H20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Journal & Audit Logs
+                </h3>
+            </div>
+            <div class="report-items">
+                <div class="report-item">
+                    <span>Payroll Journal - Monthly</span>
+                    <span class="arrow">›</span>
+                </div>
+                <div class="report-item">
+                    <span>Audit Trail of Payroll Edits</span>
+                    <span class="arrow">›</span>
+                </div>
+        </div>
         </div>
     </div>
 </div>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .reports-container {
+        padding: 20px;
+        background-color: #f5f5f5;
+        min-height: 100vh;
+    }
+
+    .reports-header {
+        margin-bottom: 20px;
+    }
+
+    .reports-header h2 {
+        color: #333;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
+        padding: 5px;
+    }
+
+    .report-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .report-header {
+        background: #f8f9fa;
+        padding: 10px 15px 0px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .report-header h3 {
+        color: #1077DA;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .header-icon {
+        color: #1077DA;
+    }
+
+    .report-items {
+        padding: 5px;
+    }
+
+    .report-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        padding: 4px 12px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        font-size: 12px;
+        position: relative;
+    }
+
+    .report-item:last-child {
+        border-bottom: none;
+    }
+
+    .report-item span:first-child {
+        padding-left: 15px;
+    }
+
+    .report-item span:first-child::before {
+        content: "•";
+        position: absolute;
+        left: 12px;
+        color: #666;
+    }
+
+    .report-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .arrow {
+        color: #666;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 1;
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 768px) {
+        .reports-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .reports-container {
+            padding: 10px;
+        }
+
+        .report-item {
+            padding: 6px 12px;
+        }
+    }
+
+    @media screen and (min-width: 769px) and (max-width: 1024px) {
+        .reports-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media screen and (min-width: 1025px) {
+        .reports-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+</style>
 {% endblock %} 
