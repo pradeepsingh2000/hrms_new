@@ -1,1189 +1,705 @@
 {% load static basefilters horillafilters employee_filter i18n %} {% load tz %} {% now "Y-m-d" as current_date %}
 {% load accessibility_filters %}
-<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
 <div id="mainNav"></div>
 <!-- End of Navigation -->
 <style>
-    /* Base Container */
-    .dash-container {
-        --d-primary: #2563eb;
-        --d-secondary: #3b82f6;
-        --d-light: #eff6ff;
-        --d-hover: #1d4ed8;
-        --d-white: #ffffff;
-        --d-gray-50: #f9fafb;
-        --d-gray-100: #f3f4f6;
-        --d-gray-200: #e5e7eb;
-        --d-gray-300: #d1d5db;
-        --d-gray-400: #9ca3af;
-        --d-text: #111827;
-        --d-text-light: #6b7280;
-        --d-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --d-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-        background-color: var(--d-gray-50);
-        padding: 1rem;
-        height: calc(100vh - 65px);
-        overflow-y: auto;
-        position: relative;
+    :root {
+        --primary: #4F46E5;
+        --primary-light: #EEF2FF;
+        --secondary: #3F3F46;
+        --success: #22C55E;
+        --warning: #F59E0B;
+        --danger: #EF4444;
+        --gray-50: #F9FAFB;
+        --gray-100: #F3F4F6;
+        --gray-200: #E5E7EB;
+        --gray-300: #D1D5DB;
+        --gray-400: #9CA3AF;
+        --gray-500: #6B7280;
+        --white: #FFFFFF;
     }
 
-    /* Hide main container scrollbar but keep functionality */
-    .dash-container::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .dash-container::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .dash-container::-webkit-scrollbar-thumb {
-        background-color: var(--d-gray-300);
-        border-radius: 4px;
-    }
-
-    /* Grid Layout */
-    .dash-row {
-        display: flex;
-        flex-wrap: wrap;
-        margin: -0.75rem;
-    }
-
-    .dash-col {
-        padding: 0.75rem;
-        flex: 0 0 auto;
-    }
-
-    /* Grid columns */
-    .dash-col-3 {
-        width: 25%;
-    }
-
-    .dash-col-6 {
-        width: 50%;
-    }
-
-    .dash-col-main {
-        flex: 1;
-        min-width: 300px;
-    }
-
-    .dash-col-side {
-        width: 300px;
-        min-width: 300px;
-    }
-
-    /* Stats Row */
-    .stats-row {
-        display: flex;
-        flex-wrap: wrap;
-        margin: -0.5rem;
-        margin-bottom: 0.75rem;
-    }
-
-    .stats-row .dash-col {
-        padding: 0.5rem;
-    }
-
-    /* Card Components */
-    .dash-card {
-        background: var(--d-white);
-        border-radius: 0.5rem;
-        box-shadow: var(--d-shadow);
-        border: 1px solid var(--d-gray-200);
-        height: 100%;
-    }
-
-    /* Right side cards specific styling */
-    .dash-col-side .dash-card {
-        height: auto;
-        max-height: 300px;
-        margin-bottom: 1rem;
-    }
-
-    .dash-col-side .dash-card:last-child {
-        margin-bottom: 0;
-    }
-
-    .dash-card-header {
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid var(--d-gray-200);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 40px;
-    }
-
-    .dash-card-body {
-        padding: 0.75rem;
-    }
-
-    .dash-col-side .dash-card-body {
-        padding: 0.5rem;
-        max-height: calc(300px - 40px);
-        overflow-y: auto;
-    }
-
-    .dash-card-title {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--d-text);
+    * {
         margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
     }
 
-    /* Stats Cards */
-    .dash-stats {
-        display: flex;
-        align-items: center;
+    .dashboard {
         padding: 1rem;
-        background: var(--d-white);
-        border-radius: 0.5rem;
-        box-shadow: var(--d-shadow-sm);
-        border: 1px solid var(--d-gray-200);
-        transition: transform 0.2s;
-        height: 80px;
-        margin-bottom: 0;
+        background: var(--gray-50);
+        min-height: 100vh;
     }
 
-    .dash-stats:hover {
+    /* Header Styles */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .header-left h1 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--secondary);
+        margin-bottom: 0.25rem;
+    }
+
+    .header-left p {
+        color: var(--gray-500);
+        font-size: 0.813rem;
+    }
+
+    .header-right {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .stat-card {
+        background: var(--white);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        transition: transform 0.2s;
+        border: 1px solid var(--gray-200);
+    }
+
+    .stat-card:hover {
         transform: translateY(-2px);
     }
 
-    .dash-stats-icon {
-        width: 2.5rem;
-        height: 2.5rem;
+    .stat-icon {
+        background: var(--primary-light);
+        color: var(--primary);
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--d-light);
-        border-radius: 0.5rem;
-        margin-right: 1rem;
-        color: var(--d-primary);
-    }
-
-    .dash-stats-icon ion-icon {
         font-size: 1.25rem;
     }
 
-    .dash-stats-content {
-        flex: 1;
-    }
-
-    .dash-stats-label {
-        font-size: 0.75rem;
-        color: var(--d-text-light);
+    .stat-info h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--secondary);
         margin-bottom: 0.25rem;
     }
 
-    .dash-stats-value {
+    .stat-info p {
+        color: var(--gray-500);
+        font-size: 0.813rem;
+    }
+
+    .stat-trend {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        margin-top: 0.375rem;
+        font-size: 0.75rem;
+    }
+
+    .trend-up {
+        color: var(--success);
+    }
+
+    .trend-down {
+        color: var(--danger);
+    }
+
+    /* Charts Section */
+    .charts-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+        min-height: 350px;
+        max-height: 400px;
+    }
+
+    .chart-card {
+        background: var(--white);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        border: 1px solid var(--gray-200);
+    }
+
+    .chart-content {
+        flex: 1;
+        position: relative;
+        min-height: 300px;
+        max-height: 350px;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-title {
         font-size: 1rem;
         font-weight: 600;
-        color: var(--d-text);
-        line-height: 1.2;
+        color: var(--secondary);
     }
 
-    /* Scrollable Content */
-    .dash-scroll {
-        max-height: 220px;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--d-gray-300) transparent;
-        padding: 0.5rem;
+    .chart-actions {
+        display: flex;
+        gap: 0.5rem;
     }
 
-    .dash-scroll::-webkit-scrollbar {
-        width: 4px;
+    .chart-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-200);
+        background: var(--white);
+        color: var(--gray-500);
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s;
     }
 
-    .dash-scroll::-webkit-scrollbar-track {
-        background: transparent;
+    .chart-btn.active {
+        background: var(--primary);
+        color: var(--white);
+        border-color: var(--primary);
     }
 
-    .dash-scroll::-webkit-scrollbar-thumb {
-        background-color: var(--d-gray-300);
-        border-radius: 2px;
+    /* Team Table */
+    .team-table-card {
+        background: var(--white);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        border: 1px solid var(--gray-200);
     }
 
-    /* Announcement Cards */
-    .dash-announcement {
-        padding: 0.625rem;
-        border-bottom: 1px solid var(--d-gray-200);
-        background: var(--d-white);
-        border-radius: 0.375rem;
-        margin-bottom: 0.5rem;
+    .team-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
     }
 
-    .dash-announcement:last-child {
-        margin-bottom: 0;
-        border-bottom: none;
-    }
-
-    .dash-announcement-title {
-        font-size: 0.813rem;
+    .team-table th {
+        padding: 0.75rem 1rem;
+        text-align: left;
         font-weight: 500;
-        color: var(--d-text);
+        color: var(--gray-500);
+        font-size: 0.875rem;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .team-table td {
+        padding: 1rem;
+        font-size: 0.875rem;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .member-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .member-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+    }
+
+    .member-details h4 {
+        color: var(--secondary);
+        font-weight: 500;
         margin-bottom: 0.25rem;
     }
 
-    .dash-announcement-meta {
+    .member-details p {
+        color: var(--gray-500);
         font-size: 0.75rem;
-        color: var(--d-text-light);
     }
 
-    /* Buttons */
-    .dash-btn {
-        height: 2rem;
-        padding: 0 0.75rem;
-        font-size: 0.813rem;
+    .status-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
         font-weight: 500;
-        border-radius: 0.375rem;
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-        cursor: pointer;
+        gap: 0.25rem;
     }
 
-    .dash-btn-primary {
-        background: var(--d-primary);
-        color: var(--d-white);
-        border: none;
-    }
+    .badge-success { background: #DCFCE7; color: #15803D; }
+    .badge-warning { background: #FEF3C7; color: #B45309; }
+    .badge-danger { background: #FEE2E2; color: #B91C1C; }
+    .badge-info { background: #DBEAFE; color: #1D4ED8; }
 
-    .dash-btn-outline {
-        border: 1px solid var(--d-gray-300);
-        background: var(--d-white);
-        color: var(--d-text);
-    }
-
-    .dash-btn-outline:hover {
-        border-color: var(--d-primary);
-        color: var(--d-primary);
-    }
-
-    .dash-btn ion-icon {
-        font-size: 1rem;
-        margin-right: 0.375rem;
-    }
-
-    /* Search Input */
-    .dash-search {
-        margin-bottom: 1rem;
+    .action-menu {
         position: relative;
     }
 
-    .dash-search input {
-        width: 100%;
-        height: 2.25rem;
-        padding: 0 2rem 0 0.75rem;
-        font-size: 0.813rem;
-        border: 1px solid var(--d-gray-300);
+    .action-btn {
+        padding: 0.375rem;
         border-radius: 0.375rem;
+        border: none;
+        background: transparent;
+        color: var(--gray-400);
+        cursor: pointer;
         transition: all 0.2s;
     }
 
-    .dash-search input:focus {
-        outline: none;
-        border-color: var(--d-primary);
-        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    .action-btn:hover {
+        background: var(--gray-100);
+        color: var(--gray-500);
     }
 
-    .dash-search::after {
-        content: "";
-        position: absolute;
-        right: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 1rem;
-        height: 1rem;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'%3E%3C/path%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: contain;
-        opacity: 0.5;
+    .table-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
     }
 
-    /* No Records Message */
-    .no-records {
-        text-align: center;
-        padding: 1rem;
-        color: var(--d-text-light);
-        font-size: 0.75rem;
+    .table-card {
+        background: var(--white);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        border: 1px solid var(--gray-200);
     }
 
-    /* Responsive Design */
-    @media (max-width: 1200px) {
-        .dash-container {
-            padding: 0.75rem;
-        }
-
-        .dash-col-6 {
-            width: 100%;
-        }
-
-        .dash-col-main,
-        .dash-col-side {
-            width: 100%;
-            min-width: 100%;
-        }
-
-        .dash-stats {
-            height: 70px;
-        }
-
-        .dash-col-side .dash-card {
-            max-height: 250px;
-        }
-
-        .dash-col-side .dash-card-body {
-            max-height: calc(250px - 40px);
-        }
-
-        .dash-scroll {
-            max-height: 180px;
-        }
-
-        .dash-row {
-            margin: -0.5rem;
-        }
-
-        .dash-col {
-            padding: 0.5rem;
-        }
-
-        .stats-row {
-            margin: -0.375rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .stats-row .dash-col {
-            padding: 0.375rem;
-        }
-
-        .dash-col-side .dash-card {
-            margin-bottom: 0.75rem;
-        }
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
     }
 
-    @media (max-width: 768px) {
-        .dash-container {
-            padding: 0.5rem;
-        }
-
-        .dash-col-3 {
-            width: 50%;
-        }
-
-        .dash-card-header {
-            padding: 0.625rem 0.75rem;
-            min-height: 42px;
-        }
-
-        .dash-card-body {
-            padding: 0.75rem;
-        }
-
-        .dash-stats {
-            height: 65px;
-            padding: 0.75rem;
-        }
-
-        .dash-stats-icon {
-            width: 2.25rem;
-            height: 2.25rem;
-        }
-
-        .dash-stats-value {
-            font-size: 0.875rem;
-        }
-
-        .dash-col-side .dash-card {
-            max-height: 220px;
-        }
-
-        .dash-col-side .dash-card-body {
-            max-height: calc(220px - 40px);
-        }
-
-        .dash-scroll {
-            max-height: 160px;
-        }
-
-        .dash-row {
-            margin: -0.375rem;
-        }
-
-        .dash-col {
-            padding: 0.375rem;
-        }
-
-        .stats-row {
-            margin: -0.25rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stats-row .dash-col {
-            padding: 0.25rem;
-        }
-
-        .dash-col-side .dash-card {
-            margin-bottom: 0.5rem;
-        }
+    .table-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--secondary);
     }
 
-    @media (max-width: 480px) {
-        .dash-container {
-            padding: 0.375rem;
-        }
-
-        .dash-row {
-            margin: -0.25rem;
-        }
-
-        .dash-col {
-            padding: 0.25rem;
-        }
-
-        .dash-col-3 {
-            width: 100%;
-        }
-
-        .dash-stats {
-            height: 60px;
-        }
-
-        .stats-row {
-            margin: -0.25rem;
-            margin-bottom: 0.5rem;
-        }
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.813rem;
     }
 
-    /* Employee Work Info and On Leave sections */
-    .dash-col-side .employee-info,
-    .dash-col-side .on-leave-info {
-        padding: 0.5rem;
+    .data-table th {
+        padding: 0.625rem;
+        text-align: left;
+        font-weight: 500;
+        color: var(--gray-500);
+        border-bottom: 1px solid var(--gray-200);
     }
 
-    .dash-col-side .info-item {
-        padding: 0.5rem;
-        border-bottom: 1px solid var(--d-gray-200);
-        margin-bottom: 0.25rem;
+    .data-table td {
+        padding: 0.625rem;
+        border-bottom: 1px solid var(--gray-200);
     }
 
-    .dash-col-side .info-item:last-child {
-        margin-bottom: 0;
-        border-bottom: none;
+    .table-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        font-size: 0.813rem;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .page-btn {
+        padding: 0.25rem 0.5rem;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.375rem;
+        background: var(--white);
+        color: var(--gray-500);
+        cursor: pointer;
+    }
+
+    .page-btn.active {
+        background: var(--primary);
+        color: var(--white);
+        border-color: var(--primary);
     }
 </style>
 
-<div class="dash-container">
-    <div class="dash-row">
-        <!-- back button -->
-        <div class="d-none mt-3 mb-2 w-100" id="back_button">
-            <button class="dash-btn dash-btn-outline">
-                <ion-icon name="arrow-back-outline"></ion-icon>{% trans "Back" %}
-            </button>
+<div class="dashboard">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <h1>Welcome back, {{request.user.get_full_name}}!</h1>
+            <p>Here's what's happening with your team today</p>
         </div>
+        <div class="header-right">
+            <span class="current-time" id="currentTime"></span>
+        </div>
+    </div>
 
-        <div class="dash-col dash-col-main">
-            <!-- Stats Row -->
-            <div class="dash-row">
-                {% if perms.employee.view_employee %}
-                    {% if "recruitment"|app_installed %}
-                        <div class="dash-col" style="width: 33.333%;">
-                            <div class="dash-stats">
-                                <div class="dash-stats-icon">
-                                    <ion-icon name="people-outline"></ion-icon>
-                                </div>
-                                <div class="dash-stats-content">
-                                    <a href="{% url 'candidate-view' %}?joining_date={{current_date}}" class="text-decoration-none">
-                                        <div class="dash-stats-label">{% trans "New Joining Today" %}</div>
-                                        <div class="dash-stats-value" hx-get="{% url 'joining-today-count' %}" hx-trigger="load">
-                                            <div class="placeholder-glow">
-                                                <span class="placeholder col-4"></span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="dash-col" style="width: 33.333%;">
-                            <div class="dash-stats">
-                                <div class="dash-stats-icon">
-                                    <ion-icon name="calendar-outline"></ion-icon>
-                                </div>
-                                <div class="dash-stats-content">
-                                    <a href="{% url 'candidate-view' %}?scheduled_from={{first_day_of_week}}&scheduled_till={{last_day_of_week}}" class="text-decoration-none">
-                                        <div class="dash-stats-label">{% trans "New Joining This Week" %}</div>
-                                        <div class="dash-stats-value" hx-get="{% url 'joining-week-count' %}" hx-trigger="load">
-                                            <div class="placeholder-glow">
-                                                <span class="placeholder col-4"></span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="dash-col" style="width: 33.333%;">
-                            <div class="dash-stats">
-                                <div class="dash-stats-icon">
-                                    <ion-icon name="people-circle-outline"></ion-icon>
-                                </div>
-                                <div class="dash-stats-content">
-                                    <a href="{% url 'employee-view' %}" class="text-decoration-none">
-                                        <div class="dash-stats-label">{% trans "Total Strength" %}</div>
-                                        <div class="dash-stats-value" hx-get="{% url 'total-employees-count' %}" hx-trigger="load">
-                                            <div class="placeholder-glow">
-                                                <span class="placeholder col-4"></span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endif %}
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="ri-team-line"></i>
             </div>
-
-            <!-- Dashboard Cards -->
-            <div class="dash-row mt-3 mx-0" id="tileContainer">
-                {% include "dashboard_tile_container.html" %}
+            <div class="stat-info">
+                <h3>67%</h3>
+                <p>Team Presence</p>
+                <div class="stat-trend trend-up">
+                    <i class="ri-arrow-up-line"></i>
+                    <span>12% vs last week</span>
+                </div>
             </div>
         </div>
 
-        <div class="dash-col dash-col-side">
-            <!-- Announcements -->
-            <div class="dash-card">
-                <div class="dash-card-header">
-                    <h3 class="dash-card-title">{% trans "Announcements" %}</h3>
-                    {% if perms.base.add_announcement %}
-                        <button class="dash-btn dash-btn-outline"
-                                hx-get="{% url 'create-announcement' %}"
-                                hx-target="#objectCreateModalTarget"
-                                hx-swap="innerHTML"
-                                data-toggle="oh-modal-toggle"
-                                data-target="#objectCreateModal">
-                            <ion-icon name="add-outline"></ion-icon>
-                        </button>
-                    {% endif %}
-                </div>
-                <div class="dash-card-body dash-scroll"
-                     hx-get="{% url 'announcement-list' %}"
-                     hx-trigger="load"
-                     id="announcementListCard">
-                    <div class="placeholder-glow">
-                        <span class="placeholder col-12" style="height: 60px;"></span>
-                    </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="ri-time-line"></i>
+            </div>
+            <div class="stat-info">
+                <h3>7h 17m</h3>
+                <p>Avg. Working Hours</p>
+                <div class="stat-trend trend-up">
+                    <i class="ri-arrow-up-line"></i>
+                    <span>8% vs last month</span>
                 </div>
             </div>
+        </div>
 
-            {% if "leave"|app_installed %}
-                {% if perms.leave.view_leaverequest or request.user|is_reportingmanager %}
-                    <div class="dash-card">
-                        <div class="dash-card-header">
-                            <h3 class="dash-card-title">{% trans "On Leave" %}</h3>
-                        </div>
-                        <div class="dash-card-body dash-scroll"
-                             hx-get="{% url 'employee-leave' %}"
-                             hx-trigger="load">
-                            <div class="placeholder-glow">
-                                <span class="placeholder col-12" style="height: 60px;"></span>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endif %}
-
-            {% if perms.employee.view_employeeworkinformation or request.user|is_reportingmanager %}
-                <div class="dash-card">
-                    <div class="dash-card-header">
-                        <h3 class="dash-card-title">{% trans "Employee Work Information" %}</h3>
-                    </div>
-                    <div class="dash-card-body">
-                        <div class="dash-search">
-                            <input type="text" 
-                                   hx-get="{% url 'emp-workinfo-complete' %}" 
-                                   hx-target="#pending"
-                                   hx-trigger="keyup changed delay:300ms" 
-                                   placeholder="Search Employee">
-                        </div>
-                        <div class="dash-scroll" id="pending" hx-get="{% url 'emp-workinfo-complete' %}" hx-trigger="load">
-                            <div class="placeholder-glow">
-                                <span class="placeholder col-12" style="height: 60px;"></span>
-                            </div>
-                        </div>
-                    </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="ri-calendar-check-line"></i>
+            </div>
+            <div class="stat-info">
+                <h3>98.56%</h3>
+                <p>On-time Arrival</p>
+                <div class="stat-trend trend-down">
+                    <i class="ri-arrow-down-line"></i>
+                    <span>3% vs yesterday</span>
                 </div>
-            {% endif %}
+            </div>
+        </div>
 
-            {% if 'birthday_view'|feature_is_accessible:request or perms.employee.view_employee %}
-                <div class="dash-card">
-                    <div class="dash-card-body" hx-get="{% url 'get-birthday' %}" hx-trigger="load">
-                        <div class="placeholder-glow">
-                            <span class="placeholder col-12" style="height: 60px;"></span>
-                        </div>
-                    </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="ri-user-follow-line"></i>
+            </div>
+            <div class="stat-info">
+                <h3>1,434</h3>
+                <p>Total Check-ins</p>
+                <div class="stat-trend trend-up">
+                    <i class="ri-arrow-up-line"></i>
+                    <span>24% vs last month</span>
                 </div>
-            {% endif %}
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #FDF2F8; color: #DB2777;">
+                <i class="ri-calendar-event-line"></i>
+            </div>
+            <div class="stat-info">
+                <h3>14</h3>
+                <p>Pending Leave Requests</p>
+                <div class="stat-trend trend-up">
+                    <i class="ri-arrow-up-line"></i>
+                    <span>5 new today</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #ECFDF5; color: #059669;">
+                <i class="ri-funds-line"></i>
+            </div>
+            <div class="stat-info">
+                <h3>92.3%</h3>
+                <p>Employee Satisfaction</p>
+                <div class="stat-trend trend-up">
+                    <i class="ri-arrow-up-line"></i>
+                    <span>2.1% vs last quarter</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-container">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Working Hours Overview</h3>
+                <div class="chart-actions">
+                    <button class="chart-btn">Week</button>
+                    <button class="chart-btn active">Month</button>
+                    <button class="chart-btn">Year</button>
+                </div>
+            </div>
+            <div class="chart-content">
+                <canvas id="workingHoursChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Attendance Distribution</h3>
+            </div>
+            <div class="chart-content">
+                <canvas id="attendanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <!-- Recent Activity Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Recent Activity</h3>
+                <select class="chart-btn">
+                    <option>Today</option>
+                    <option>Yesterday</option>
+                    <option>Last 7 days</option>
+                </select>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Activity</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John Smith</td>
+                        <td>Checked in</td>
+                        <td>09:00 AM</td>
+                        <td><span class="status-badge badge-success">On Time</span></td>
+                    </tr>
+                    <tr>
+                        <td>Sarah Johnson</td>
+                        <td>Started break</td>
+                        <td>10:30 AM</td>
+                        <td><span class="status-badge badge-info">Active</span></td>
+                    </tr>
+                    <tr>
+                        <td>Mike Wilson</td>
+                        <td>Submitted leave request</td>
+                        <td>11:15 AM</td>
+                        <td><span class="status-badge badge-warning">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>Emily Brown</td>
+                        <td>Checked in</td>
+                        <td>09:45 AM</td>
+                        <td><span class="status-badge badge-danger">Late</span></td>
+                    </tr>
+                    <tr>
+                        <td>David Lee</td>
+                        <td>Started work</td>
+                        <td>09:05 AM</td>
+                        <td><span class="status-badge badge-success">WFH</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="table-footer">
+                <span>Showing 5 of 25 entries</span>
+                <div class="pagination">
+                    <button class="page-btn">Previous</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leave Requests Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Leave Requests</h3>
+                <select class="chart-btn">
+                    <option>All Status</option>
+                    <option>Pending</option>
+                    <option>Approved</option>
+                    <option>Rejected</option>
+                </select>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Type</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Alice Cooper</td>
+                        <td>Annual Leave</td>
+                        <td>Dec 24-26</td>
+                        <td><span class="status-badge badge-warning">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>Bob Martin</td>
+                        <td>Sick Leave</td>
+                        <td>Dec 20</td>
+                        <td><span class="status-badge badge-success">Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td>Carol White</td>
+                        <td>Personal Leave</td>
+                        <td>Dec 22-23</td>
+                        <td><span class="status-badge badge-danger">Rejected</span></td>
+                    </tr>
+                    <tr>
+                        <td>Daniel Brown</td>
+                        <td>Work From Home</td>
+                        <td>Dec 21</td>
+                        <td><span class="status-badge badge-success">Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td>Eva Green</td>
+                        <td>Annual Leave</td>
+                        <td>Dec 27-29</td>
+                        <td><span class="status-badge badge-warning">Pending</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="table-footer">
+                <span>Showing 5 of 14 entries</span>
+                <div class="pagination">
+                    <button class="page-btn">Previous</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">Next</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<div class="oh-modal" id="sendMailModal" role="dialog" aria-labelledby="sendMailModal" aria-hidden="true">
-    <div class="oh-modal__dialog">
-        <div class="oh-modal__dialog-header">
-            <span class="oh-modal__dialog-title" id="sendMailModalLabel">
-                <h5>{% trans 'Send Mail' %}</h5>
-            </span>
-            <button class="oh-modal__close" aria-label="Close"><ion-icon name="close-outline"></ion-icon></button>
-        </div>
-        <div class="oh-modal__dialog-body" id="mail-content"></div>
-    </div>
-</div>
-
-<div class="oh-modal" id="bigModal" role="dialog" aria-labelledby="bigModal" aria-hidden="true">
-    <div class="oh-modal__dialog">
-        <div class="oh-modal__dialog-header">
-            <h2 class="oh-modal__dialog-title" id="">
-                {% trans "Details" %}
-            </h2>
-            <button class="oh-modal__close" aria-label="Close">
-                <ion-icon name="close-outline"></ion-icon>
-            </button>
-        </div>
-        <div class="oh-modal__dialog-body oh-modal__dialog-relative" id="bigModalTarget"></div>
-    </div>
-</div>
-
-
-<div class="oh-modal" id="editModal" role="dialog" aria-labelledby="editModal" aria-hidden="true">
-    <div class="oh-modal__dialog">
-        <div class="oh-modal__dialog-header">
-            <h2 class="oh-modal__dialog-title" id="editModalLabel">
-                {% trans "Add Asset Report" %}
-            </h2>
-            <button type="button" class="oh-modal_close--custom"
-                onclick="$('#editModal').removeClass('oh-modal--show');">
-                <ion-icon name="close-outline" role="img" aria-label="close outline"></ion-icon>
-            </button>
-        </div>
-        <div class="oh-modal__dialog-body" id="editModalForm"></div>
-    </div>
-</div>
-
-{% include "announcement_single_view.html" %}
-
-
-</main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="{% static 'dashboard/getBirthday.js' %}"></script>
-<script src="{% static 'dashboard/employeeChart.js' %}"></script>
-
-{% if "leave"|app_installed %}
-    <script src="{% static 'dashboard/onLeave.js' %}"></script>
-    <script src="{% static 'dashboard/leaveChart.js' %}"></script>
-{% endif %}
-
-{% if "recruitment"|app_installed %}
-    {% if perms.recruitment.view_recruitment or request.user|is_stagemanager %}
-        <script src="{% static 'dashboard/recruitmentChart.js' %}"></script>
-    {% endif %}
-{% endif %}
-
-{% if "attendance"|app_installed %}
-    {% if perms.attendance.view_attendance or request.user|is_reportingmanager %}
-        <script src="{% static 'dashboard/attendanceChart.js' %}"></script>
-    {% endif %}
-{% endif %}
-
-{% if "onboarding"|app_installed %}
-    <!-- onboarding dashboard -->
-    <script src="{% static 'dashboard/onboardChart.js' %}"></script>
-{% endif %}
-
-{% if "pms"|app_installed %}
-    <!-- PMS chart -->
-    <script src="{% static 'src/dashboard/pmsChart.js' %}"></script>
-{% endif %}
-
-<!-- leave dashboard -->
 <script>
-
-    // Function to remove the div after 20 seconds
-    function removeBirthdayDiv() {
-        const pageWrapper = document.querySelector('.page-wrapper');
-        if (pageWrapper) {
-            pageWrapper.remove(); // Remove the div
-            localStorage.setItem('birthdayShown', 'true'); // Set a flag in localStorage
-        }
+    // Update current time
+    function updateTime() {
+        const now = new Date();
+        const options = { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric',
+            hour: '2-digit', 
+            minute: '2-digit'
+        };
+        document.getElementById('currentTime').textContent = now.toLocaleDateString('en-US', options);
     }
+    updateTime();
+    setInterval(updateTime, 60000);
 
-    // Check localStorage to see if the div has already been shown
-    if (!localStorage.getItem('birthdayShown')) {
-        // If not shown before, display the div
-        setTimeout(removeBirthdayDiv, 12000); // Remove after 12 seconds
-    } else {
-        // If already shown, remove it immediately (or don't add it at all)
-        document.addEventListener("DOMContentLoaded", () => {
-            const pageWrapper = document.querySelector('.page-wrapper');
-            if (pageWrapper) {
-                pageWrapper.remove(); // Remove if already shown
-            }
-        });
-    }
-
-    function setDifference(setA, setB) {
-        if (setB.length > setA.length) {
-            temp = setA
-            setA = setB
-            setB = temp
-        }
-        return [...setA.filter(element => !setB.includes(element))];
-    }
-    $(document).ready(function () {
-        function setDifference(arr1, arr2) {
-            return arr2.filter(id => !arr1.includes(id));
-        }
-
-        const defaultTileOrder = [
-            "notInYetId", "LeaveApprove", "shiftRequestApprove", "WorkTypeRequestApprove", "AttendanceValidate", "OTApprove",
-            "LeaveAllocationApprove", "feedbackAnswer", "assetRequestApprove", "movable8", "pendingHours", "notoutYetId",
-            "movable2", "movable3", "movable4", "movable1", "movable5", "movable6", "movable7", "movable9", "movable10", "movable11"
-        ];
-
-        const allCurrentTileIds = $(".oh-card-dashboard--moveable[id]").map(function () {
-            return $(this).attr("id");
-        }).get();
-
-        // If tile order is not saved, initialize it
-        if (!localStorage.getItem("tileOrder")) {
-            localStorage.setItem("tileOrder", JSON.stringify(defaultTileOrder));
-        } else {
-            let storedIds = JSON.parse(localStorage.getItem("tileOrder")) || [];
-
-            // Add only new tiles (not already in storage) to the end
-            const newTileIds = setDifference(storedIds, allCurrentTileIds);  // removes missing IDs
-            const missingTileIds = setDifference(allCurrentTileIds, storedIds);  // adds new IDs
-
-            const updatedOrder = storedIds.filter(id => allCurrentTileIds.includes(id)); // clean invalid
-            const finalOrder = [...updatedOrder, ...missingTileIds];
-
-            localStorage.setItem("tileOrder", JSON.stringify(finalOrder));
-        }
-
-        // Reorder dashboard tiles based on tileOrder
-        function orderDashboardTile() {
-            const parentContainer = $("#tileContainer");
-            const orderIds = JSON.parse(localStorage.getItem("tileOrder")) || [];
-
-            const sortedElements = [];
-            for (const id of orderIds) {
-                const element = $("#" + id);
-                if (element.length) {
-                    sortedElements.push(element);
-                }
-            }
-
-            if (sortedElements.length) {
-                parentContainer.empty();
-                for (const element of sortedElements) {
-                    parentContainer.append(element);
-                }
-            }
-        }
-
-        orderDashboardTile();
-
-        // Update tileOrder on mouseup
-        $(".oh-card-dashboard--moveable").on("mouseup", function () {
-            setTimeout(() => {
-                const newOrder = $(".oh-card-dashboard--moveable").map(function () {
-                    return $(this).attr("id");
-                }).get();
-
-                localStorage.setItem("tileOrder", JSON.stringify(newOrder));
-            }, 10);
-        });
-    });
-
-    function closeNew(anchorElement) {
-        $(anchorElement).parent().find('#newTab').hide();
-    }
-
-    var w = c.width = window.innerWidth,
-        h = c.height = window.innerHeight,
-        ctx = c.getContext('2d'),
-
-        hw = w / 2, // half-width
-        hh = h / 2,
-
-        opts = {
-            strings: ['HAPPY', 'BIRTHDAY!', "{{request.user.employee_get|escapejs}}"],
-            charSize: 60,
-            charSpacing: 45,
-            lineHeight: 65,
-            cx: w / 2,
-            cy: h / 2,
-            fireworkPrevPoints: 10,
-            fireworkBaseLineWidth: 5,
-            fireworkAddedLineWidth: 8,
-            fireworkSpawnTime: 200,
-            fireworkBaseReachTime: 30,
-            fireworkAddedReachTime: 30,
-            fireworkCircleBaseSize: 20,
-            fireworkCircleAddedSize: 10,
-            fireworkCircleBaseTime: 30,
-            fireworkCircleAddedTime: 30,
-            fireworkCircleFadeBaseTime: 10,
-            fireworkCircleFadeAddedTime: 5,
-            fireworkBaseShards: 20,
-            fireworkAddedShards: 5,
-            fireworkShardPrevPoints: 3,
-            fireworkShardBaseVel: 4,
-            fireworkShardAddedVel: 2,
-            fireworkShardBaseSize: 10,
-            fireworkShardAddedSize: 3,
-            gravity: 0.1,
-            upFlow: -0.1,
-            letterContemplatingWaitTime: 360,
-            balloonSpawnTime: 10,
-            balloonBaseInflateTime: 10,
-            balloonAddedInflateTime: 10,
-            balloonBaseSize: 60,
-            balloonAddedSize: 20,
-            balloonBaseVel: 0.4,
-            balloonAddedVel: 0.4,
-            balloonBaseRadian: -(Math.PI / 2 - 0.5),
-            balloonAddedRadian: -1,
+    // Working Hours Chart
+    const workingHoursCtx = document.getElementById('workingHoursChart').getContext('2d');
+    new Chart(workingHoursCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Working Hours',
+                data: [7.5, 8.2, 6.5, 9.1, 7.8, 4.2, 3.5],
+                backgroundColor: '#4F46E5',
+                borderRadius: 6,
+                barThickness: 10,
+            }]
         },
-        calc = {
-            totalWidth: opts.charSpacing * Math.max(opts.strings[0].length, opts.strings[1].length)
-        },
-
-        Tau = Math.PI * 2,
-        TauQuarter = Tau / 4,
-
-        letters = [];
-
-    ctx.font = opts.charSize + 'px "Lobster"';
-
-
-    function Letter(char, x, y) {
-        this.char = char;
-        this.x = x;
-        this.y = y;
-
-        this.dx = -ctx.measureText(char).width / 2;
-        this.dy = +opts.charSize / 2;
-
-        this.fireworkDy = this.y - hh;
-
-        var hue = 220; // Blue hue
-        this.color = 'hsl(220, 80%, 50%)';
-        this.lightAlphaColor = 'hsla(220, 80%, 50%, alp)';
-        this.lightColor = 'hsl(220, 80%, 70%)';
-        this.alphaColor = 'hsla(220, 80%, 50%, alp)';
-
-        this.reset();
-    }
-    Letter.prototype.reset = function () {
-        this.phase = 'firework';
-        this.tick = 0;
-        this.spawned = false;
-        this.spawningTime = opts.fireworkSpawnTime * Math.random() | 0;
-        this.reachTime = opts.fireworkBaseReachTime + opts.fireworkAddedReachTime * Math.random() | 0;
-        this.lineWidth = opts.fireworkBaseLineWidth + opts.fireworkAddedLineWidth * Math.random();
-        this.prevPoints = [[0, hh, 0]];
-    }
-    Letter.prototype.step = function () {
-        if (this.phase === 'firework') {
-            if (!this.spawned) {
-                ++this.tick;
-                if (this.tick >= this.spawningTime) {
-                    this.tick = 0;
-                    this.spawned = true;
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 2,
+            plugins: {
+                legend: {
+                    display: false
                 }
-            } else {
-                ++this.tick;
-
-                var linearProportion = this.tick / this.reachTime,
-                    harmonicProportion = Math.sin(linearProportion * TauQuarter),
-
-                    x = linearProportion * this.x,
-                    y = hh + harmonicProportion * this.fireworkDy;
-
-                if (this.prevPoints.length > opts.fireworkPrevPoints)
-                    this.prevPoints.shift();
-
-                this.prevPoints.push([x, y, linearProportion * this.lineWidth]);
-
-                var lineWidthProportion = 1 / (this.prevPoints.length - 1);
-
-                for (var i = 1; i < this.prevPoints.length; ++i) {
-                    var point = this.prevPoints[i],
-                        point2 = this.prevPoints[i - 1];
-
-                    ctx.strokeStyle = this.alphaColor.replace('alp', i / this.prevPoints.length);
-                    ctx.lineWidth = point[2] * lineWidthProportion * i;
-                    ctx.beginPath();
-                    ctx.moveTo(point[0], point[1]);
-                    ctx.lineTo(point2[0], point2[1]);
-                    ctx.stroke();
-                }
-
-                if (this.tick >= this.reachTime) {
-                    this.phase = 'contemplate';
-
-                    this.circleFinalSize = opts.fireworkCircleBaseSize + opts.fireworkCircleAddedSize * Math.random();
-                    this.circleCompleteTime = opts.fireworkCircleBaseTime + opts.fireworkCircleAddedTime * Math.random() | 0;
-                    this.circleCreating = true;
-                    this.circleFading = false;
-
-                    this.circleFadeTime = opts.fireworkCircleFadeBaseTime + opts.fireworkCircleFadeAddedTime * Math.random() | 0;
-                    this.tick = 0;
-                    this.tick2 = 0;
-
-                    this.shards = [];
-
-                    var shardCount = opts.fireworkBaseShards + opts.fireworkAddedShards * Math.random() | 0,
-                        angle = Tau / shardCount,
-                        cos = Math.cos(angle),
-                        sin = Math.sin(angle),
-
-                        x = 1,
-                        y = 0;
-
-                    for (var i = 0; i < shardCount; ++i) {
-                        var x1 = x;
-                        x = x * cos - y * sin;
-                        y = y * cos + x1 * sin;
-
-                        this.shards.push(new Shard(this.x, this.y, x, y, this.alphaColor));
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 12,
+                    grid: {
+                        color: '#F3F4F6'
+                    },
+                    ticks: {
+                        font: { size: 11 },
+                        stepSize: 2
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: { size: 11 }
                     }
                 }
             }
-        } else if (this.phase === 'contemplate') {
-            ++this.tick;
+        }
+    });
 
-            if (this.circleCreating) {
-                ++this.tick2;
-                var proportion = this.tick2 / this.circleCompleteTime,
-                    harmonic = -Math.cos(proportion * Math.PI) / 2 + 0.5;
-
-                ctx.beginPath();
-                ctx.fillStyle = this.lightAlphaColor.replace('light', 50 + 50 * proportion).replace('alp', proportion);
-                ctx.arc(this.x, this.y, harmonic * this.circleFinalSize, 0, Tau);
-                ctx.fill();
-
-                if (this.tick2 > this.circleCompleteTime) {
-                    this.tick2 = 0;
-                    this.circleCreating = false;
-                    this.circleFading = true;
-                }
-            } else if (this.circleFading) {
-                ctx.fillStyle = this.lightColor.replace('light', 70);
-                ctx.fillText(this.char, this.x + this.dx, this.y + this.dy);
-
-                ++this.tick2;
-                var proportion = this.tick2 / this.circleFadeTime,
-                    harmonic = -Math.cos(proportion * Math.PI) / 2 + 0.5;
-
-                ctx.beginPath();
-                ctx.fillStyle = this.lightAlphaColor.replace('light', 100).replace('alp', 1 - harmonic);
-                ctx.arc(this.x, this.y, this.circleFinalSize, 0, Tau);
-                ctx.fill();
-
-                if (this.tick2 >= this.circleFadeTime)
-                    this.circleFading = false;
-
-            } else {
-                ctx.fillStyle = this.lightColor.replace('light', 70);
-                ctx.fillText(this.char, this.x + this.dx, this.y + this.dy);
-            }
-
-            for (var i = 0; i < this.shards.length; ++i) {
-                this.shards[i].step();
-
-                if (!this.shards[i].alive) {
-                    this.shards.splice(i, 1);
-                    --i;
+    // Attendance Distribution Chart
+    const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+    new Chart(attendanceCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Present', 'WFH', 'Late', 'Absent'],
+            datasets: [{
+                data: [65, 15, 12, 8],
+                backgroundColor: ['#22C55E', '#F59E0B', '#EF4444', '#9CA3AF'],
+                borderWidth: 0,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 1.5,
+            cutout: '75%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                        font: { size: 11 }
+                    }
                 }
             }
-
-            if (this.tick > opts.letterContemplatingWaitTime) {
-                this.phase = 'balloon';
-
-                this.tick = 0;
-                this.spawning = true;
-                this.spawnTime = opts.balloonSpawnTime * Math.random() | 0;
-                this.inflating = false;
-                this.inflateTime = opts.balloonBaseInflateTime + opts.balloonAddedInflateTime * Math.random() | 0;
-                this.size = opts.balloonBaseSize + opts.balloonAddedSize * Math.random() | 0;
-
-                var rad = opts.balloonBaseRadian + opts.balloonAddedRadian * Math.random(),
-                    vel = opts.balloonBaseVel + opts.balloonAddedVel * Math.random();
-
-                this.vx = Math.cos(rad) * vel;
-                this.vy = Math.sin(rad) * vel;
-            }
-        } else if (this.phase === 'balloon') {
-            ctx.strokeStyle = this.lightColor.replace('light', 80);
-
-            if (this.spawning) {
-                ++this.tick;
-                ctx.fillStyle = this.lightColor.replace('light', 70);
-                ctx.fillText(this.char, this.x + this.dx, this.y + this.dy);
-
-                if (this.tick >= this.spawnTime) {
-                    this.tick = 0;
-                    this.spawning = false;
-                    this.inflating = true;
-                }
-            } else if (this.inflating) {
-                ++this.tick;
-
-                var proportion = this.tick / this.inflateTime,
-                    x = this.cx = this.x,
-                    y = this.cy = this.y - this.size * proportion;
-
-                ctx.fillStyle = this.alphaColor.replace('alp', proportion);
-                ctx.beginPath();
-                generateBalloonPath(x, y, this.size * proportion);
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(x, this.y);
-                ctx.stroke();
-
-                ctx.fillStyle = this.lightColor.replace('light', 70);
-                ctx.fillText(this.char, this.x + this.dx, this.y + this.dy);
-
-                if (this.tick >= this.inflateTime) {
-                    this.tick = 0;
-                    this.inflating = false;
-                }
-            } else {
-                this.cx += this.vx;
-                this.cy += this.vy += opts.upFlow;
-
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                generateBalloonPath(this.cx, this.cy, this.size);
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.moveTo(this.cx, this.cy);
-                ctx.lineTo(this.cx, this.cy + this.size);
-                ctx.stroke();
-
-                ctx.fillStyle = this.lightColor.replace('light', 70);
-                ctx.fillText(this.char, this.cx + this.dx, this.cy + this.dy + this.size);
-
-                if (this.cy + this.size < -hh || this.cx < -hw || this.cy > hw)
-                    this.phase = 'done';
-            }
         }
-    }
-    function Shard(x, y, vx, vy, color) {
-        var vel = opts.fireworkShardBaseVel + opts.fireworkShardAddedVel * Math.random();
-
-        this.vx = vx * vel;
-        this.vy = vy * vel;
-
-        this.x = x;
-        this.y = y;
-
-        this.prevPoints = [[x, y]];
-        this.color = color;
-
-        this.alive = true;
-
-        this.size = opts.fireworkShardBaseSize + opts.fireworkShardAddedSize * Math.random();
-    }
-    Shard.prototype.step = function () {
-        this.x += this.vx;
-        this.y += this.vy += opts.gravity;
-
-        if (this.prevPoints.length > opts.fireworkShardPrevPoints)
-            this.prevPoints.shift();
-
-        this.prevPoints.push([this.x, this.y]);
-
-        var lineWidthProportion = this.size / this.prevPoints.length;
-
-        for (var k = 0; k < this.prevPoints.length - 1; ++k) {
-            var point = this.prevPoints[k],
-                point2 = this.prevPoints[k + 1];
-
-            ctx.strokeStyle = this.color.replace('alp', k / this.prevPoints.length);
-            ctx.lineWidth = k * lineWidthProportion;
-            ctx.beginPath();
-            ctx.moveTo(point[0], point[1]);
-            ctx.lineTo(point2[0], point2[1]);
-            ctx.stroke();
-        }
-
-        if (this.prevPoints[0][1] > hh)
-            this.alive = false;
-    }
-    function generateBalloonPath(x, y, size) {
-        ctx.moveTo(x, y);
-        ctx.bezierCurveTo(x - size / 2, y - size / 2,
-            x - size / 4, y - size,
-            x, y - size);
-        ctx.bezierCurveTo(x + size / 4, y - size,
-            x + size / 2, y - size / 2,
-            x, y);
-    }
-
-    function anim() {
-        window.requestAnimationFrame(anim);
-
-        // Clear the canvas for the next frame
-        ctx.clearRect(0, 0, w, h);
-
-        ctx.translate(hw, hh);
-
-        var done = true;
-        for (var l = 0; l < letters.length; ++l) {
-            letters[l].step();
-            if (letters[l].phase !== 'done') done = false;
-        }
-
-        ctx.translate(-hw, -hh);
-
-        if (done)
-            for (var l = 0; l < letters.length; ++l)
-                letters[l].reset();
-    }
-
-    for (var i = 0; i < opts.strings.length; ++i) {
-        for (var j = 0; j < opts.strings[i].length; ++j) {
-            letters.push(new Letter(opts.strings[i][j],
-                j * opts.charSpacing + opts.charSpacing / 2 - opts.strings[i].length * opts.charSize / 2,
-                i * opts.lineHeight + opts.lineHeight / 2 - opts.strings.length * opts.lineHeight / 2));
-        }
-    }
-
-    anim();
-
-    window.addEventListener('resize', function () {
-        w = c.width = window.innerWidth;
-        h = c.height = window.innerHeight;
-
-        hw = w / 2;
-        hh = h / 2;
-
-        ctx.font = opts.charSize + 'px Verdana';
-    })
-
+    });
 </script>
-<script src="{% static 'build/js/dashboardDriver.js' %}"></script>
-
-{% if not request.user.driverviewed_set.first or "dashboard" not in request.user.driverviewed_set.first.user_viewed %}
-<script>
-    runDriver()
-</script>
-{% endif %}

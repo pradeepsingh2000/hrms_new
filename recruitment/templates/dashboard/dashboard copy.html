@@ -1,0 +1,479 @@
+{% extends 'index.html' %} {% block content %} {% load static i18n horillafilters mathfilters recruitmentfilters %}
+<style>
+	/* Modern Dashboard Styles */
+	.hrms-wrapper {
+		padding: 1rem;
+		background: #f8f9fa;
+		max-width: 1400px;
+		margin: 0 auto;
+	}
+
+	.hrms-dashboard {
+		width: 100%;
+	}
+
+	.hrms-stat-card {
+		background: #ffffff;
+		border-radius: 8px;
+		padding: 1rem;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+		transition: transform 0.2s ease;
+		height: 100%;
+		border: 1px solid #e9ecef;
+	}
+
+	.hrms-stat-card:hover {
+		transform: translateY(-3px);
+	}
+
+	.hrms-stat-header {
+		display: flex;
+		align-items: center;
+		margin-bottom: 0.75rem;
+	}
+
+	.hrms-stat-icon {
+		width: 35px;
+		height: 35px;
+		border-radius: 8px;
+		background: #e7f1ff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-right: 0.75rem;
+	}
+
+	.hrms-stat-icon ion-icon {
+		color: #0d6efd;
+		font-size: 1.1rem;
+	}
+
+	.hrms-stat-title {
+		color: #6c757d;
+		font-size: 0.75rem;
+		font-weight: 500;
+		margin: 0;
+	}
+
+	.hrms-stat-value {
+		color: #212529;
+		font-size: 1.25rem;
+		font-weight: 600;
+		margin: 0;
+	}
+
+	.hrms-chart-card {
+		background: #ffffff;
+		border-radius: 8px;
+		padding: 1rem;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+		margin-top: 1rem;
+		border: 1px solid #e9ecef;
+	}
+
+	.hrms-chart-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 1rem;
+	}
+
+	.hrms-chart-title {
+		color: #212529;
+		font-size: 0.9rem;
+		font-weight: 600;
+		margin: 0;
+	}
+
+	.hrms-table {
+		width: 100%;
+		border-collapse: separate;
+		border-spacing: 0;
+		font-size: 0.85rem;
+	}
+
+	.hrms-table th {
+		background: #f8f9fa;
+		padding: 0.75rem;
+		font-weight: 500;
+		color: #495057;
+		border-bottom: 2px solid #dee2e6;
+		font-size: 0.8rem;
+	}
+
+	.hrms-table td {
+		padding: 0.75rem;
+		border-bottom: 1px solid #dee2e6;
+		color: #495057;
+	}
+
+	.hrms-profile {
+		display: flex;
+		align-items: center;
+	}
+
+	.hrms-profile-avatar {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		margin-right: 0.5rem;
+	}
+
+	.hrms-profile-name {
+		color: #212529;
+		font-weight: 500;
+		font-size: 0.85rem;
+	}
+
+	.hrms-skill-list, .hrms-onboard-list {
+		font-size: 0.85rem;
+	}
+
+	.hrms-skill-item, .hrms-onboard-item {
+		padding: 0.75rem !important;
+	}
+
+	.hrms-skill-count {
+		font-size: 0.8rem;
+		color: #6c757d;
+	}
+
+	.form-select-sm {
+		font-size: 0.8rem;
+		padding: 0.25rem 0.5rem;
+	}
+
+	.btn-outline-primary {
+		font-size: 0.8rem;
+		padding: 0.25rem 0.75rem;
+	}
+
+	.text-muted {
+		font-size: 0.85rem;
+	}
+
+	/* Responsive adjustments */
+	@media (max-width: 768px) {
+		.hrms-wrapper {
+			padding: 0.75rem;
+		}
+
+		.hrms-stat-card {
+			margin-bottom: 0.75rem;
+		}
+
+		.hrms-stat-value {
+			font-size: 1.1rem;
+		}
+	}
+
+	/* Keep existing tooltip style but adjust size */
+	.tooltip {
+		position: absolute;
+		background-color: #000;
+		color: #fff;
+		padding: 4px 8px;
+		border-radius: 4px;
+		font-size: 0.75rem;
+		z-index: 1000;
+		margin-top: 5px;
+	}
+</style>
+
+<div class="hrms-wrapper">
+	<div class="hrms-dashboard">
+		<div class="row g-3">
+			<!-- Total Vacancies Card -->
+			<div class="col-12 col-sm-6 col-lg-3">
+				<div class="hrms-stat-card">
+					<div class="hrms-stat-header">
+						<div class="hrms-stat-icon">
+							<ion-icon name="briefcase-outline"></ion-icon>
+						</div>
+						<div>
+							<p class="hrms-stat-title">{% trans "Total Vacancies" %}</p>
+							<h2 class="hrms-stat-value">{{total_vacancy}}</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Ongoing Recruitments Card -->
+			<div class="col-12 col-sm-6 col-lg-3">
+				<div class="hrms-stat-card">
+					<div class="hrms-stat-header">
+						<div class="hrms-stat-icon">
+							<ion-icon name="people-outline"></ion-icon>
+						</div>
+						<div>
+							<p class="hrms-stat-title">{% trans "Ongoing Recruitments" %}</p>
+							<h2 class="hrms-stat-value">{{ongoing_recruitments}}</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Hired Candidates Card -->
+			<div class="col-12 col-sm-6 col-lg-3">
+				<div class="hrms-stat-card">
+					<div class="hrms-stat-header">
+						<div class="hrms-stat-icon">
+							<ion-icon name="checkmark-circle-outline"></ion-icon>
+						</div>
+						<div>
+							<p class="hrms-stat-title">{% trans "Hired Candidates" %}</p>
+							<h2 class="hrms-stat-value">{{total_hired_candidates}}</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Conversion Rate Card -->
+			<div class="col-12 col-sm-6 col-lg-3">
+				<div class="hrms-stat-card">
+					<div class="hrms-stat-header">
+						<div class="hrms-stat-icon">
+							<ion-icon name="trending-up-outline"></ion-icon>
+						</div>
+						<div>
+							<p class="hrms-stat-title">{% trans "Conversion Rate" %}</p>
+							<h2 class="hrms-stat-value">{{conversion_ratio}}%</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Charts Section -->
+		<div class="row g-3">
+			<!-- Skill Zone Card -->
+			<div class="col-12 col-lg-4">
+				<div class="hrms-chart-card">
+					<div class="hrms-chart-header">
+						<h3 class="hrms-chart-title">{% trans "Skill Zone Status" %}</h3>
+					</div>
+					<div class="hrms-chart-body" style="height: 325px; overflow-y: auto;">
+						{% if skill_zone %}
+							<div class="hrms-skill-list">
+								{% for skill in skill_zone %}
+								<div class="hrms-skill-item d-flex justify-content-between align-items-center p-3 border-bottom">
+									<div class="hrms-profile">
+										<img src="https://ui-avatars.com/api/?name={{skill}}&background=random" 
+											 class="hrms-profile-avatar" alt="{{skill}}"/>
+										<span class="hrms-profile-name">{{skill}}</span>
+									</div>
+									<span class="hrms-skill-count">{{skill.skillzonecandidate_set.all|length}} 
+										{% if skill.skillzonecandidate_set.all|length != 1 %}
+											{% trans "Candidates" %}
+										{% else %}
+											{% trans "Candidate" %}
+										{% endif %}
+									</span>
+								</div>
+								{% endfor %}
+							</div>
+						{% else %}
+							<div class="text-center py-5">
+								<img src="{% static 'images/ui/no_candidate.png' %}" alt="No skills" 
+									 style="width: 100px; margin-bottom: 1rem;"/>
+								<p class="text-muted">{% trans "No skill zone available." %}</p>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+			<!-- Candidate Chart -->
+			<div class="col-12 col-lg-4">
+				<div class="hrms-chart-card">
+					<div class="hrms-chart-header">
+						<h3 class="hrms-chart-title">{% trans "Candidate Offer Letter Status" %}</h3>
+					</div>
+					<div class="hrms-chart-body">
+						{% if total_candidates %}
+							<canvas id="candidateChart"></canvas>
+						{% else %}
+							<div class="text-center py-5">
+								<img src="{% static 'images/ui/no_vacancy.png' %}" alt="No candidates" 
+									 style="width: 100px; margin-bottom: 1rem;"/>
+								<p class="text-muted">{% trans "No Candidates available." %}</p>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+			<!-- Onboarding Section -->
+			{% if "onboarding"|app_installed %}
+			<div class="col-12 col-lg-4">
+				<div class="hrms-chart-card">
+					<div class="hrms-chart-header">
+						<h3 class="hrms-chart-title">{% trans "Candidate on Onboard" %}</h3>
+						{% if onboarding_count %}
+							<a href="{% url 'candidate-view' %}?start_onboard=true" 
+							   class="btn btn-outline-primary btn-sm">{% trans "View All" %}</a>
+						{% endif %}
+					</div>
+					<div class="hrms-chart-body" style="height: 325px; overflow-y: auto;">
+						{% if onboarding_count %}
+							<div class="hrms-onboard-list">
+								{% for cand in onboard_candidates %}
+								<div class="hrms-onboard-item d-flex justify-content-between align-items-center p-3 border-bottom">
+									<div class="hrms-profile">
+										<img src="https://ui-avatars.com/api/?name={{cand}}&background=random" 
+											 class="hrms-profile-avatar" alt="{{cand}}"/>
+										<span class="hrms-profile-name">{{cand|truncatechars:15}}</span>
+									</div>
+									<span class="hrms-position">{{cand.job_position_id|truncatechars:15}}</span>
+								</div>
+								{% endfor %}
+							</div>
+						{% else %}
+							<div class="text-center py-5">
+								<img src="{% static 'images/ui/no_candidate.png' %}" alt="No onboarding" 
+									 style="width: 100px; margin-bottom: 1rem;"/>
+								<p class="text-muted">{% trans "No candidates started onboarding." %}</p>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			{% endif %}
+		</div>
+
+		<!-- Charts Row -->
+		<div class="row g-3 mt-3">
+			<!-- Joinings Chart -->
+			<div class="col-12 col-lg-7">
+				<div class="hrms-chart-card">
+					<div class="hrms-chart-header">
+						<h3 class="hrms-chart-title">{% trans "Joinings Per Month" %}</h3>
+						<div class="d-flex align-items-center">
+							<select class="form-select form-select-sm me-2" id="year">
+							</select>
+							<span id="chart2"><ion-icon name="caret-forward"></ion-icon></span>
+						</div>
+					</div>
+					{% if joining %}
+						<canvas id="hiringChart"></canvas>
+					{% else %}
+						<div class="text-center py-5">
+							<img src="{% static 'images/ui/no_records.svg' %}" alt="No records" 
+								 style="width: 115px; margin-bottom: 1rem;"/>
+							<p class="text-muted">{% trans "No records were available." %}</p>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+
+			<!-- Recruitment Stages Chart -->
+			<div class="col-12 col-lg-5">
+				<div class="hrms-chart-card">
+					<div class="hrms-chart-header">
+						<h3 class="hrms-chart-title">{% trans "Candidates Per Stage" %}</h3>
+						<span id="chart1"><ion-icon name="caret-forward"></ion-icon></span>
+					</div>
+					{% if stage_chart_count %}
+						<canvas id="recruitmentChart1"></canvas>
+					{% else %}
+						<div class="text-center py-5">
+							<img src="{% static 'images/ui/interview.png' %}" alt="No stages" 
+								 style="width: 120px; margin-bottom: 1rem;"/>
+							<p class="text-muted">{% trans "No recruitment stages currently available." %}</p>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
+		<!-- Recruitment Table -->
+		{% if ongoing_recruitments %}
+		<div class="row mt-3">
+			<div class="col-12">
+				<div class="hrms-chart-card">
+					<div class="hrms-chart-header">
+						<h3 class="hrms-chart-title">{% trans "Ongoing Recruitments & Hiring Managers" %}</h3>
+					</div>
+					<div class="table-responsive">
+						<table class="hrms-table">
+							<thead>
+								<tr>
+									<th>{% trans "Recruitment" %}</th>
+									<th>{% trans "Manager" %}</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for recruitment_title, managers in recruitment_manager_mapping.items %}
+								<tr>
+									<td>{{ recruitment_title }}</td>
+									<td>{{ managers|join:",  " }}</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'dashboard/recruitmentChart.js' %}"></script>
+<script src="{% static 'dashboard/joiningChart.js' %}"></script>
+<script src="{% static 'dashboard/vacancyChart.js' %}"></script>
+<script src="{% static 'dashboard/candidateChart.js' %}"></script>
+
+<script>
+	// Year dropdown population
+	var selectyear = document.getElementById("year");
+	var currentYear = new Date().getFullYear();
+	
+	for (var year = 2000; year <= currentYear; year++) {
+		var option = document.createElement("option");
+		option.value = year;
+		option.text = year;
+		if (year === currentYear) {
+			option.selected = true;
+		}
+		selectyear.appendChild(option);
+	}
+
+	// Tooltip functionality
+	function showTooltip(event, text) {
+		const tooltip = document.createElement('div');
+		tooltip.className = 'tooltip';
+		tooltip.textContent = text;
+		
+		const rect = event.target.getBoundingClientRect();
+		tooltip.style.top = rect.bottom + 'px';
+		tooltip.style.left = rect.left + 'px';
+		
+		document.body.appendChild(tooltip);
+		
+		event.target.addEventListener('mouseout', () => {
+			document.body.removeChild(tooltip);
+		});
+	}
+
+	// Help text event listeners
+	document.addEventListener('DOMContentLoaded', () => {
+		const conversionHelp = document.getElementById('conversionhelptext');
+		const offerHelp = document.getElementById('offerhelptext');
+		
+		if (conversionHelp) {
+			conversionHelp.addEventListener('click', (e) => {
+				showTooltip(e, 'Conversion Rate = ( Total Hired Candidates / Total Candidates ) * 100');
+			});
+		}
+		
+		if (offerHelp) {
+			offerHelp.addEventListener('click', (e) => {
+				showTooltip(e, 'Offer Acceptance Rate = ( Onboarding candidates / Total Hired Candidates ) * 100');
+			});
+		}
+	});
+</script>
+
+{% endblock content %}

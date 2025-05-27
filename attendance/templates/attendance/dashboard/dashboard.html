@@ -1,237 +1,391 @@
 {% extends 'index.html' %} {% load i18n %} {% block content %} {% load static %}
 {% load attendancefilters %}
-<style>
-    .oh-sticky-table__right {
-        position: sticky;
-        right: 0;
-        background-color: #fff;
-    }
-</style>
-<div class="oh-wrapper">
-    <div class="oh-dashboard__left col-12 col-sm-12 col-md-12 col-lg-12 pb-5">
-        <div class="oh-dashboard row">
-            <div class="oh-dashboard__cards row">
-                <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                    <div class="oh-card-dashboard oh-card-dashboard--neutral" style="border-radius: 15px;">
-                        <div class="oh-card-dashboard__header">
-                            <span class="oh-card-dashboard__title">{% trans "Today's Attendances" %}</span>
-                        </div>
-                        <div class="oh-card-dashboard__body">
-                            <div class="oh-card-dashboard__counts">
-                                <span class="oh-card-dashboard__count">{{marked_attendances_ratio}}%</span>
-                            </div>
-                            {% comment %}
-                                <span class="oh-badge oh-card-dashboard__badge">{{marked_attendances}}/{{expected_attendances}}</span>
-                            {% endcomment %}
-                        </div>
+<head>
+    <!-- Add required CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --danger-color: #dc2626;
+            --background-color: #f8fafc;
+        }
+
+        body {
+            background-color: var(--background-color);
+            font-family: 'Inter', sans-serif;
+        }
+        .material-icons {
+    font-family: "Material Icons";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: flex;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            z-index: 1;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: var(--secondary-color) transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<div class="min-h-screen bg-gray-50 p-4 md:p-6">
+    <!-- Header Section -->
+    <div class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-semibold text-gray-800">Attendance Dashboard</h1>
+        <p class="text-gray-500 mt-2">Overview of today's attendance and statistics</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
+        <!-- Present Today -->
+        <div class="dashboard-card bg-white p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Present Today</p>
+                    <div class="flex items-baseline">
+                        <h3 class="text-2xl font-bold text-gray-800">85%</h3>
+                        <span class="text-sm text-green-500 ml-2">+2.5%</span>
                     </div>
                 </div>
-                <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                    <div class="oh-card-dashboard oh-card-dashboard oh-card-dashboard--success" style="border-radius: 15px;">
-                        <div class="oh-card-dashboard__header">
-                            <span class="oh-card-dashboard__title">{% trans "On Time" %}</span>
-                        </div>
-                        <div class="oh-card-dashboard__body">
-                            <div class="oh-card-dashboard__counts">
-                                <span class="oh-card-dashboard__count">{{on_time}}</span>
-                            </div>
-                            {% comment %}
-                                <span class="oh-badge oh-card-dashboard__badge">{{on_time_ratio}}%</span>
-                            {% endcomment %}
-                        </div>
-                    </div>
-                </div>
-                {% if late_come_early_out_tracking %}
-                <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                    <div class="oh-card-dashboard oh-card-dashboard--danger" style="border-radius: 15px;">
-                        <div class="oh-card-dashboard__header">
-                            <span class="oh-card-dashboard__title">{% trans "Late Come" %}</span>
-                        </div>
-                        <div class="oh-card-dashboard__body">
-                            <div class="oh-card-dashboard__counts">
-                                <span class="oh-card-dashboard__count">{{late_come}}</span>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
+                <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+                    <i class="fas fa-user-check text-blue-500"></i>
                 </div>
             </div>
+            <div class="mt-4 bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-blue-500 h-full rounded-full" style="width: 85%"></div>
+            </div>
+        </div>
 
-            
-            <div class="oh-dashboard row pt-3">
-                <div class="oh-dashboard__movable-cards row mt-4">
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-4 ">
-                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent"
-                            style="min-height: 423px;border-radius: 15px;">
-                            <div class="oh-card-dashboard__header oh-card-dashboard__header--divider"
-                                style="margin-bottom:2.25rem;" id="attendance_header">
-                                <div class="oh-card-dashboard__title mb-2">
-                                    {% trans "Attendance Analytic" %}
-                                </div>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <select id="type" class="oh-select" name="type" onchange="changeView(this)" style="
-                                        width: 150px;
-                                        padding: 3px;
-                                        color: #5e5c5c;
-                                    ">
-                                        <option value="day">
-                                            {% trans "Day" %}
-                                        </option>
-                                        <option value="weekly">
-                                            {% trans "Weekly" %}
-                                        </option>
-                                        <option value="monthly">
-                                            {% trans "Monthly" %}
-                                        </option>
-                                        <option value="date_range">
-                                            {% trans "Date range" %}
-                                        </option>
-                                    </select>
-                                    <span id="day_input">
-                                        <input type="date" class="mb-2 float-end pointer oh-select"
-                                            id="attendance_month" onchange="changeMonth()"
-                                            style="width: 100px; color: #5e5c5c" />
-                                    </span>
-                                </div>
-                                <div class="oh-card-dashboard__body">
-                                    <canvas id="dailyAnalytic" style="cursor: pointer"></canvas>
-                                </div>
-                            </div>
-                        </div>
+        <!-- On Time -->
+        <div class="dashboard-card bg-white p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">On Time</p>
+                    <div class="flex items-baseline">
+                        <h3 class="text-2xl font-bold text-gray-800">156</h3>
+                        <span class="text-sm text-green-500 ml-2">+12%</span>
                     </div>
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-4">
-                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent"
-                            style="min-height: 423px;border-radius: 15px;">
-                            <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                                <span class="oh-card-dashboard__title">{% trans 'Offline Employees' %}
-                                </span>
-                            </div>
-                            <div class="oh-card-dashboard__body" hx-get="{% url 'not-in-yet' %}" hx-trigger="load"
-                                id="notInYetIdCardBody" style="height: 310px;">
-                                <div class="animated-background"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-4 " id="pendingHours">
-                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent"
-                            style="min-height: 423px;border-radius: 15px;">
-                            <div class="oh-card-dashboard__header oh-card-dashboard__header--divider"
-                                id="pendingHoursHeader">
-                                <div class="d-flex justify-content-between">
-                                    <div class="oh-card-dashboard__title mb-2">
-                                        {% trans "Hours Chart" %}
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <input type="month" class="mb-2 float-end pointer oh-select"
-                                            id="hourAccountMonth" onchange="dynamicMonth($(this))"
-                                            style="width: 100px; color: #5e5c5c" />
-                                    </div>
-                                </div>
-                                <div class="oh-card-dashboard__body" style="height:275px">
-                                    <canvas id="pendingHoursCanvas" style="cursor: pointer"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
+                    <i class="fas fa-clock text-green-500"></i>
                 </div>
             </div>
+        </div>
 
-            <div class="oh-dashboard row pt-3">
-                <div class="col-12 col-sm-12 col-md-12 col-lg-3 ">
-                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent" style="border-radius: 15px;">
-                        <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                            <span class="oh-card-dashboard__title">{% trans "On Break" %}</span>
-                        </div>
-
-                        <div class="oh-card-dashboard__body" hx-get="{% url 'on-break-employees' %}" hx-trigger="load"
-                            id="onBreakEmployeesCard" style="height:400px">
-                            <div class="animated-background h-100"></div>
-                        </div>
+        <!-- Late Arrivals -->
+        <div class="dashboard-card bg-white p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Late Arrivals</p>
+                    <div class="flex items-baseline">
+                        <h3 class="text-2xl font-bold text-gray-800">23</h3>
+                        <span class="text-sm text-red-500 ml-2">+5%</span>
                     </div>
                 </div>
-                <div class="col-12 col-sm-12 col-md-12 col-lg-9">
-                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
-                        <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                            <span class="oh-card-dashboard__title">{% trans "Overtime To Approve" %}</span>
-                        </div>
-                        <div class="oh-card-dashboard__body pb-4" style="height:400px"
-                            hx-get="{% url 'dashboard-approve-overtimes' %}" hx-trigger="load"
-                            hx-on-htmx-after-request="$('#department_date_type').change();"
-                            id="OTApproveBody">
-                            <div class="animated-background h-100"></div>
-                        </div>
-                    </div>
+                <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+                    <i class="fas fa-user-clock text-red-500"></i>
                 </div>
             </div>
+        </div>
 
-            <div class="oh-dashboard row pt-3">
-                <div class="col-12 col-sm-12 col-md-12 col-lg-8">
-                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent h-100" style="border-radius: 15px;">
-                        <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                            <span class="oh-card-dashboard__title">{% trans "Attendance To Validate" %}</span>
-                        </div>
-                        <div class="oh-card-dashboard__body" style="height:400px" id="attendanceValidateCardBody"
-                            hx-get="{% url 'dashboard-validate-attendances' %}" hx-trigger="load">
-                            <div class="animated-background h-100"></div>
-                        </div>
+        <!-- On Break -->
+        <div class="dashboard-card bg-white p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">On Break</p>
+                    <div class="flex items-baseline">
+                        <h3 class="text-2xl font-bold text-gray-800">12</h3>
                     </div>
                 </div>
-                <div class="col-12 col-sm-12 col-md-12 col-lg-4 " id="departmentChartCard">
-                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent" style="border-radius: 15px;">
-                        <div class="oh-card-dashboard__header oh-card-dashboard__header--divider"
-                            id="departmentChartHeader">
-                            <div class="oh-card-dashboard__title mb-2">
-                                {% trans "Department Overtime Chart" %}
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <select id="department_date_type" class="oh-select" name="type" style="
-                                    width: 150px;
-                                    padding: 3px;
-                                    color: #5e5c5c;
-                                ">
-                                    <option value="day">
-                                        {% trans "Day" %}
-                                    </option>
-                                    <option value="weekly">
-                                        {% trans "Weekly" %}
-                                    </option>
-                                    <option value="monthly">
-                                        {% trans "Monthly" %}
-                                    </option>
-                                    <option value="date_range">
-                                        {% trans "Date range" %}
-                                    </option>
-                                </select>
-                                <span id="department_day_input">
-                                    <input type="date" class="mb-2 float-end pointer oh-select" id="department_month"
-                                        style="width: 100px; color: #5e5c5c" />
-                                </span>
-                            </div>
-                            <div class="oh-card-dashboard__body" style="height:400px">
-                                <canvas id="departmentOverChart" style="cursor: pointer"></canvas>
-                            </div>
-                        </div>
-                    </div>
+                <div class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center">
+                    <i class="fas fa-coffee text-orange-500"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="oh-modal" id="sendMailModal" role="dialog" aria-labelledby="sendMailModal" aria-hidden="true">
-        <div class="oh-modal__dialog">
-            <div class="oh-modal__dialog-header">
-                <h5 class="oh-modal__dialog-title" id="sendMailModalLabel">
-                    {% trans "Send Mail" %}
-                </h5>
-                <button class="oh-modal__close" aria-label="Close">
-                    <ion-icon name="close-outline"></ion-icon>
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Attendance Analytics -->
+        <div class="dashboard-card p-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h3 class="text-lg font-semibold text-gray-800">Attendance Analytics</h3>
+                <div class="flex items-center gap-3">
+                    <select class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Daily</option>
+                        <option>Weekly</option>
+                        <option>Monthly</option>
+                    </select>
+                    <button class="btn bg-gray-50 hover:bg-gray-100 text-gray-600">
+                        <i class="fas fa-download text-sm"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="h-[300px]">
+                <canvas id="attendanceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Department Hours -->
+        <div class="dashboard-card p-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h3 class="text-lg font-semibold text-gray-800">Department Hours</h3>
+                <div class="flex items-center gap-3">
+                    <input type="month" class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button class="btn bg-gray-50 hover:bg-gray-100 text-gray-600">
+                        <i class="fas fa-filter text-sm"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="h-[300px]">
+                <canvas id="departmentChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Offline Employees -->
+        <div class="dashboard-card p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-800">Offline Employees</h3>
+                <span class="text-sm text-gray-500">Total: 8</span>
+            </div>
+            <div class="space-y-4 custom-scrollbar" style="max-height: 400px; overflow-y: auto;">
+                <!-- Employee Card -->
+                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <img src="https://ui-avatars.com/api/?name=John+Doe" class="w-10 h-10 rounded-full">
+                    <div class="ml-3">
+                        <h4 class="text-sm font-medium text-gray-800">John Doe</h4>
+                        <p class="text-xs text-gray-500">Software Developer</p>
+                    </div>
+                    <span class="ml-auto text-xs text-gray-500">4h ago</span>
+                </div>
+                <!-- Add more employee cards here -->
+            </div>
+        </div>
+
+        <!-- Overtime Requests -->
+        <div class="dashboard-card p-6 col-span-1 lg:col-span-2">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-800">Overtime Requests</h3>
+                <button class="btn bg-blue-500 hover:bg-blue-600 text-white">
+                    View All
                 </button>
             </div>
-            <div class="oh-modal__dialog-body" id="mail-content"></div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hours</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <img src="https://ui-avatars.com/api/?name=Jane+Smith" class="w-8 h-8 rounded-full">
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium text-gray-800">Jane Smith</p>
+                                        <p class="text-xs text-gray-500">Design Team</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500">Mar 20, 2024</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">2.5h</td>
+                            <td class="px-6 py-4">
+                                <span class="status-badge bg-yellow-50 text-yellow-700">Pending</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex space-x-2">
+                                    <button class="btn bg-blue-50 hover:bg-blue-100 text-blue-600 text-sm">
+                                        Approve
+                                    </button>
+                                    <button class="btn bg-gray-50 hover:bg-gray-100 text-gray-600 text-sm">
+                                        Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{% static 'dashboard/attendanceChart.js' %}"></script>
 </div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Attendance Analytics Chart
+const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+new Chart(attendanceCtx, {
+    type: 'line',
+    data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+            label: 'Present',
+            data: [180, 175, 178, 182, 177, 170, 165],
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+            fill: true,
+            tension: 0.4
+        }, {
+            label: 'Late',
+            data: [20, 25, 22, 18, 23, 30, 35],
+            borderColor: '#dc2626',
+            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    padding: 20
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    display: true,
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// Department Hours Chart
+const deptCtx = document.getElementById('departmentChart').getContext('2d');
+new Chart(deptCtx, {
+    type: 'bar',
+    data: {
+        labels: ['IT', 'HR', 'Sales', 'Marketing', 'Finance'],
+        datasets: [{
+            label: 'Average Hours',
+            data: [8.5, 8.2, 7.9, 8.1, 8.4],
+            backgroundColor: 'rgba(37, 99, 235, 0.8)',
+            borderRadius: 6
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    padding: 20
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    display: true,
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+</script>
 {% endblock content %}

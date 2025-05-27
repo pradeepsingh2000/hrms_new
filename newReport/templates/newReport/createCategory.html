@@ -3,128 +3,434 @@
 {% load i18n %}
 
 {% block content %}
-<div class="oh-wrapper">
-    <div class="oh-main__content">
-        <div class="row">
-            <div class="col-12 col-md-8 col-lg-6 mx-auto">
-                <div class="oh-card">
-                    <div class="oh-card__header">
-                        <h5 class="oh-card__title">{% trans "Create Expense Category" %}</h5>
-                    </div>
-                    <div class="oh-card__body">
-                        <form method="post" class="oh-form">
-                            {% csrf_token %}
-                            
-                            <div class="oh-form__group">
-                                <label for="category_name" class="oh-label">{% trans "Category Name" %}</label>
-                                <input 
-                                    type="text" 
-                                    id="category_name" 
-                                    name="category_name" 
-                                    class="oh-input" 
-                                    required
-                                    placeholder="{% trans 'Enter category name' %}"
-                                >
-                            </div>
+<div class="create-category">
+    <div class="form-container">
+        <div class="form-header">
+           
+            <h1>{% trans "Create Expense Category" %}</h1>
+            <p class="subtitle">{% trans "Add a new category to manage your expenses" %}</p>
+        </div>
 
-                            <div class="oh-form__group">
-                                <label for="description" class="oh-label">{% trans "Description" %}</label>
-                                <textarea 
-                                    id="description" 
-                                    name="description" 
-                                    class="oh-input" 
-                                    rows="3"
-                                    placeholder="{% trans 'Enter category description' %}"
-                                ></textarea>
-                            </div>
+        <form method="post" class="category-form">
+            {% csrf_token %}
+            
+            <div class="form-group floating">
+                <input 
+                    type="text" 
+                    id="category_name" 
+                    name="category_name" 
+                    class="form-input" 
+                    required
+                    placeholder=" "
+                >
+                <label for="category_name" class="floating-label">{% trans "Category Name" %}</label>
+                <div class="input-highlight"></div>
+            </div>
 
-                            <div class="oh-form__group">
-                                <label for="budget_limit" class="oh-label">{% trans "Monthly Budget Limit" %}</label>
-                                <div class="oh-input-group">
-                                    <span class="oh-input-group__icon oh-input-group__icon--left">$</span>
-                                    <input 
-                                        type="number" 
-                                        id="budget_limit" 
-                                        name="budget_limit" 
-                                        class="oh-input oh-input__icon" 
-                                        step="0.01"
-                                        min="0"
-                                        placeholder="0.00"
-                                    >
-                                </div>
-                            </div>
+            <div class="form-group floating">
+                <textarea 
+                    id="description" 
+                    name="description" 
+                    class="form-input" 
+                    rows="3"
+                    placeholder=" "
+                ></textarea>
+                <label for="description" class="floating-label">{% trans "Description" %}</label>
+                <div class="input-highlight"></div>
+            </div>
 
-                            <div class="oh-form__group">
-                                <label class="oh-label d-block">{% trans "Category Type" %}</label>
-                                <div class="oh-radio-group">
-                                    <div class="oh-radio">
-                                        <input 
-                                            type="radio" 
-                                            id="type_regular" 
-                                            name="category_type" 
-                                            value="regular" 
-                                            class="oh-radio__input"
-                                            checked
-                                        >
-                                        <label for="type_regular" class="oh-radio__label">{% trans "Regular" %}</label>
-                                    </div>
-                                    <div class="oh-radio">
-                                        <input 
-                                            type="radio" 
-                                            id="type_reimbursable" 
-                                            name="category_type" 
-                                            value="reimbursable" 
-                                            class="oh-radio__input"
-                                        >
-                                        <label for="type_reimbursable" class="oh-radio__label">{% trans "Reimbursable" %}</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="oh-form__group">
-                                <label class="oh-label d-block">{% trans "Status" %}</label>
-                                <div class="oh-switch">
-                                    <input 
-                                        type="checkbox" 
-                                        id="is_active" 
-                                        name="is_active" 
-                                        class="oh-switch__input"
-                                        checked
-                                    >
-                                    <label for="is_active" class="oh-switch__label">{% trans "Active" %}</label>
-                                </div>
-                            </div>
-
-                            <div class="oh-form__actions">
-                                <button type="submit" class="oh-btn oh-btn--primary">
-                                    {% trans "Create Category" %}
-                                </button>
-                                <a href="{% url 'newReport:dashboard' %}" class="oh-btn oh-btn--secondary">
-                                    {% trans "Cancel" %}
-                                </a>
-                            </div>
-                        </form>
-                    </div>
+            <div class="form-group budget-group">
+                <label class="group-label">{% trans "Monthly Budget Limit" %}</label>
+                <div class="budget-input-wrapper">
+                    <div class="currency-symbol">$</div>
+                    <input 
+                        type="number" 
+                        id="budget_limit" 
+                        name="budget_limit" 
+                        class="form-input" 
+                        step="0.01"
+                        min="0"
+                        placeholder="0.00"
+                    >
                 </div>
             </div>
-        </div>
+
+            <div class="form-group category-type">
+                <label class="group-label">{% trans "Category Type" %}</label>
+                <div class="radio-group">
+                    <label class="radio-container">
+                        <input 
+                            type="radio" 
+                            name="category_type" 
+                            value="regular" 
+                            checked
+                        >
+                        <span class="radio-custom"></span>
+                        <span class="radio-label">{% trans "Regular" %}</span>
+                    </label>
+                    <label class="radio-container">
+                        <input 
+                            type="radio" 
+                            name="category_type" 
+                            value="reimbursable" 
+                        >
+                        <span class="radio-custom"></span>
+                        <span class="radio-label">{% trans "Reimbursable" %}</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group status-group">
+                <label class="group-label">{% trans "Status" %}</label>
+                <label class="toggle">
+                    <input 
+                        type="checkbox" 
+                        id="is_active" 
+                        name="is_active" 
+                        checked
+                    >
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">{% trans "Active" %}</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-check"></i>
+                    {% trans "Create Category" %}
+                </button>
+                <a href="{% url 'newReport:dashboard' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    {% trans "Cancel" %}
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 
 <style>
-    .oh-radio-group {
+    .create-category {
+        min-height: 100vh;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
         display: flex;
-        gap: 1rem;
-    }
-    
-    .oh-form__actions {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
+        align-items: center;
+        justify-content: center;
     }
 
-    .oh-switch {
-        margin-top: 0.5rem;
+    .form-container {
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        margin: 1rem;
     }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .header-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .header-icon i {
+        font-size: 2rem;
+        color: white;
+    }
+
+    .form-header h1 {
+        color: #1e293b;
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: #64748b;
+        font-size: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .floating {
+        position: relative;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: transparent;
+    }
+
+    .form-input:focus {
+        border-color: #6366f1;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .floating .form-input {
+        padding: 1rem;
+    }
+
+    .floating .floating-label {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: white;
+        padding: 0 0.5rem;
+        color: #64748b;
+        transition: all 0.3s ease;
+        pointer-events: none;
+    }
+
+    .floating .form-input:focus ~ .floating-label,
+    .floating .form-input:not(:placeholder-shown) ~ .floating-label {
+        top: 0;
+        font-size: 0.875rem;
+        color: #6366f1;
+    }
+
+    .group-label {
+        display: block;
+        color: #1e293b;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+
+    .budget-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .currency-symbol {
+        position: absolute;
+        left: 1rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .budget-group .form-input {
+        padding-left: 2rem;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .radio-container {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .radio-container input {
+        display: none;
+    }
+
+    .radio-custom {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .radio-custom:after {
+        content: '';
+        width: 10px;
+        height: 10px;
+        background: #6366f1;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.2s ease;
+    }
+
+    .radio-container input:checked ~ .radio-custom {
+        border-color: #6366f1;
+    }
+
+    .radio-container input:checked ~ .radio-custom:after {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .radio-label {
+        color: #1e293b;
+        font-weight: 500;
+    }
+
+    .toggle {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .toggle input {
+        display: none;
+    }
+
+    .toggle-slider {
+        width: 48px;
+        height: 24px;
+        background: #e2e8f0;
+        border-radius: 12px;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .toggle-slider:before {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        top: 2px;
+        left: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .toggle input:checked ~ .toggle-slider {
+        background: #6366f1;
+    }
+
+    .toggle input:checked ~ .toggle-slider:before {
+        transform: translateX(24px);
+    }
+
+    .toggle-label {
+        margin-left: 0.75rem;
+        color: #1e293b;
+        font-weight: 500;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2.5rem;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        gap: 0.5rem;
+    }
+
+    .btn i {
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        color: white;
+        flex: 1;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .btn-secondary:hover {
+        background: #e2e8f0;
+        color: #1e293b;
+    }
+
+    @media (max-width: 640px) {
+        .create-category {
+            padding: 1rem;
+        }
+
+        .form-container {
+            padding: 1.5rem;
+        }
+
+        .form-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+
+    @media (min-width: 641px) and (max-width: 1024px) {
+        .form-container {
+            max-width: 500px;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-container {
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .form-group {
+        animation: fadeIn 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+    .form-group:nth-child(5) { animation-delay: 0.5s; }
 </style>
+
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+{% endblock %}
 {% endblock %}
