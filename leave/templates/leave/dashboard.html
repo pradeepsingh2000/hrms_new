@@ -2,263 +2,370 @@
 {% load static %}
 {% load i18n %}
 {% block content %}
-{% load tz %}
 
-{% now "Y-m-d" as current_date %}
+<div class="dashboard-container">
+    <!-- Modern Stats Cards Row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon pending">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3>12</h3>
+                <p>{% trans "Pending Requests" %}</p>
+            </div>
+            <div class="stat-footer">
+                <span class="trend-up">+2.5% </span>from last month
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon approved">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>45</h3>
+                <p>{% trans "Approved Leaves" %}</p>
+            </div>
+            <div class="stat-footer">
+                <span class="trend-up">+5.7% </span>from last month
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon rejected">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3>8</h3>
+                <p>{% trans "Rejected Leaves" %}</p>
+            </div>
+            <div class="stat-footer">
+                <span class="trend-down">-1.2% </span>from last month
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-row">
+        <div class="chart-card large">
+            <div class="chart-header">
+                <h3>{% trans "Leave Trends" %}</h3>
+                <div class="chart-actions">
+                    <select class="modern-select">
+                        <option>Last 7 Days</option>
+                        <option>Last 30 Days</option>
+                        <option>Last 90 Days</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chart-body">
+                <canvas id="leavesTrendChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>{% trans "Leave Types Distribution" %}</h3>
+            </div>
+            <div class="chart-body">
+                <canvas id="leaveTypesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Requests Table -->
+    <div class="table-card">
+        <div class="table-header">
+            <h3>{% trans "Recent Leave Requests" %}</h3>
+            <button class="modern-button">View All</button>
+        </div>
+        <div class="table-responsive">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Type</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="employee-info">
+                                <img src="{% static 'images/avatars/avatar1.jpg' %}" alt="Employee" class="avatar">
+                                <span>John Doe</span>
+                            </div>
+                        </td>
+                        <td>Annual Leave</td>
+                        <td>2024-03-15</td>
+                        <td>2024-03-20</td>
+                        <td><span class="status-badge pending">Pending</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn approve">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="action-btn reject">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- More static rows -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modern Styles -->
 <style>
-    .oh-dashboard__right {
+    .dashboard-container {
+        padding: 2rem;
+        background: #f8f9fa;
+    }
+
+    /* Stats Cards */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
     }
 
-    .oh-card-dashboard {
-        flex: 1;
-        height: 100%;
-        cursor: default;
+    .stat-icon.pending { background: #fff8e1; color: #ffa000; }
+    .stat-icon.approved { background: #e8f5e9; color: #43a047; }
+    .stat-icon.rejected { background: #ffebee; color: #e53935; }
+
+    .stat-content h3 {
+        font-size: 1.8rem;
+        margin: 0;
+        font-weight: 600;
     }
 
-    .pointer {
+    .stat-content p {
+        color: #6c757d;
+        margin: 0.5rem 0;
+    }
+
+    .stat-footer {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .trend-up { color: #43a047; }
+    .trend-down { color: #e53935; }
+
+    /* Charts */
+    .charts-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .modern-select {
+        padding: 0.5rem 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 0.5rem;
+        background: white;
+        color: #333;
+    }
+
+    /* Table Styles */
+    .table-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .modern-button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.5rem;
+        background: #007bff;
+        color: white;
         cursor: pointer;
+        transition: background 0.2s;
     }
 
-    .dash-card {
-        padding-bottom: 30px;
+    .modern-button:hover {
+        background: #0056b3;
     }
-    .tooltip {
-		position: absolute;
-		background-color: #000;
-		color: #fff;
-		padding: 5px;
-		border-radius: 5px;
-		display: block;
-		margin-top:80px;
-	}
+
+    .modern-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .modern-table th {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 2px solid #e0e0e0;
+        color: #6c757d;
+    }
+
+    .modern-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .employee-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.875rem;
+    }
+
+    .status-badge.pending {
+        background: #fff8e1;
+        color: #ffa000;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .action-btn.approve {
+        background: #e8f5e9;
+        color: #43a047;
+    }
+
+    .action-btn.reject {
+        background: #ffebee;
+        color: #e53935;
+    }
+
+    .action-btn:hover {
+        opacity: 0.8;
+    }
 </style>
-<div class="oh-wrapper mb-4">
-    <div class="d-none mt-5" id="back_button" style="width:10%">
-        <a href="" class="oh-btn oh-btn--secondary oh-btn--shadow ms-3">
-            <ion-icon class="me-2 md hydrated" name="arrow-back-outline" role="img"
-                aria-label="arrow-back-outline"></ion-icon>{% trans "Back" %}</a>
-    </div>
-    <div class="oh-dashboard row" id="dashboard">
-        <div class="oh-dashboard__left col-12 col-sm-12 col-md-12 col-lg-9">
-            <div class="oh-dashboard__cards row">
-                <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                    <div class="oh-card-dashboard oh-card-dashboard oh-card-dashboard--neutral filter pointer dash-card"
-                        id="requestedLeaves">
-                        <div class="oh-card-dashboard__header">
-                            <span class="oh-card-dashboard__title">{% trans "Requests to Approve" %}</span>
-                            <div onmouseover="helptextView(event, 'Leave requests in &quot;Requested&quot; status from today.')" class="d-inline position-relative">
-                                <ion-icon name="help-circle-outline" id="offerhelptext"></ion-icon>
-                                <div id="tooltip" class="tooltip-text d-none"></div>
-                            </div>
-                        </div>
-                        <div class="oh-card-dashboard__body">
-                            <div class="oh-card-dashboard__counts">
-                                <span class="oh-card-dashboard__count">{{requested|length}}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                    <div class="oh-card-dashboard oh-card-dashboard--success filter pointer dash-card"
-                        id="approvedLeaves">
-                        <div class="oh-card-dashboard__header">
-                            <span class="oh-card-dashboard__title">{% trans "Approved Leaves In This Month" %}</span>
-                        </div>
-                        <div class="oh-card-dashboard__body">
-                            <div class="oh-card-dashboard__counts">
-                                <span class="oh-card-dashboard__count">{{approved|length}}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                    <div class="oh-card-dashboard oh-card-dashboard--danger filter pointer dash-card"
-                        id="rejectedLeaves">
-                        <div class="oh-card-dashboard__header">
-                            <span class="oh-card-dashboard__title">{% trans "Rejected Leaves In This Month" %}</span>
-                        </div>
-                        <div class="oh-card-dashboard__body">
-                            <div class="oh-card-dashboard__counts">
-                                <span class="oh-card-dashboard__count">{{rejected|length}}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="oh-dashboard__movable-cards row mt-4">
-                <div class="col-12 col-sm-12 col-md-12 col-lg-8 mt-2">
-                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent h-100">
-                        <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                            <span class="oh-card-dashboard__title pointer" id="employee-previous" title="{% trans 'Previous' %}">
-                                <ion-icon name="caret-back-outline"></ion-icon>
-                            </span>
-                            <span class="oh-card-dashboard__title">{% trans "Employee Leaves" %}</span>
-                            <span class="oh-card-dashboard__title float-end pointer" id="employee-next" title="{% trans 'next' %}">
-                                <ion-icon name="caret-forward"></ion-icon>
-                            </span>
-                        </div>
-                        <div class="d-flex flex-row-reverse">
-                            <input type="month" class="mb-2 float-end pointer" name="" id="dash_month" />
-                        </div>
-                        <div class="oh-card-dashboard__body" id="employee_leave_canvas">
-                            <canvas id="employeeLeave" class="pointer"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-12 col-md-12 col-lg-4 mt-2">
-                    <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent" style="">
-                        <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                            <span class="oh-card-dashboard__title">{% trans "On Leave" %}</span>
-                        </div>
-                        <div class="oh-card-dashboard__body" hx-get="{% url 'employee-leave' %}" hx-trigger="load"
-                            id="onLeaveListCard">
-                            <div class="animated-background"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="oh-dashboard__right  col-12 col-sm-12 col-md-12 col-lg-3">
-            <div class="oh-dashboard__events">
-                <div class="w-100">
-                    <div class="w-100 mb-1" id="back_button">
-                        <a href="{% url 'leave-employee-dashboard' %}?dashboard=true"
-                            class="oh-btn oh-btn--secondary oh-btn--shadow">{% trans "View Personal Dashboard" %}
-                            <ion-icon class="me-2 md hydrated" name="arrow-forward-outline" role="img"
-                                aria-label="arrow-back-outline"></ion-icon></a>
-                    </div>
-
-                    <div class="oh-dashboard__event oh-dashboard__event--purple mb-2" style="padding-bottom:0.75rem">
-                        <div class="oh-dasboard__event-photo" style="background-color:white">
-                            <img src="{% static '/images/ui/sunbed.png' %}" class="oh-dashboard__event-userphoto" />
-                        </div>
-                        <div class="oh-dasboard__event-details">
-                            <span class="oh-dashboard__event-title">{% trans "Next Holiday" %}</span>
-                            <span class="oh-dashboard__event-main">{{next_holiday.name}}</span>
-                            <span class="dateformat_changer oh-dashboard__event-date">{{next_holiday.start_date}}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent mt-4"
-                style="">
-                <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                    <span class="oh-card-dashboard__title">{% trans "Upcoming holidays" %}</span>
-                    <div onmouseover="helptextView(event, 'Upcoming holidays in this year.')" class="d-inline position-relative">
-                        <ion-icon name="help-circle-outline" ></ion-icon>
-                        <div id="tooltip" class="tooltip-text d-none"></div>
-                    </div>
-                </div>
-                <div class="oh-card-dashboard__body" hx-get="{% url 'get-upcoming-holidays' %}" hx-trigger="load"
-                    id="upcomingHolidaysList">
-                    <div class="animated-background"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-12 col-md-12 col-lg-3 mt-3">
-            <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
-                <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                    <span class="oh-card-dashboard__title">{% trans "Department Leaves" %}</span>
-                </div>
-                <div class="oh-card-dashboard__body">
-                    {% if current_date == next_holiday.start_date|date:"Y-m-d" %}
-                    <div style="height: 380px; display:flex;align-items: center;justify-content: center;" class="">
-                        <div style="" class="">
-                            <img style="    display: block;width: 70px;margin: 20px auto ;"
-                                src="{% static 'images/ui/sunbed outline.png' %}" class="" alt="" />
-                            <h3 style="font-size:16px" class="oh-404__subtitle">{% trans "Today is a holiday." %}</h3>
-                        </div>
-                    </div>
-                    {% else %}
-                    <div class="d-flex flex-row-reverse">
-                        <input type="month" class="mb-2 pointer" name="" id="dash_department_month" />
-                    </div>
-                    <div class="oh-card-dashboard__body" id="department_leave_canvas">
-                        <canvas id="departmentLeave" class="pointer"></canvas>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-12 col-md-12 col-lg-3 mt-3">
-            <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
-                <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                    <span class="oh-card-dashboard__title">{% trans "Leave Type - Count of leaves" %}</span>
-                </div>
-                <div class="oh-card-dashboard__body">
-                    <div class="d-flex flex-row-reverse">
-                        <input type="month" class="mb-2 pointer" name="" id="dash_leave_type_month" />
-                    </div>
-                    <div class="oh-card-dashboard__body" id="leave_type_canvas">
-                        <canvas id="leaveType" class="pointer"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-12 col-md-12 col-lg-6 mt-3">
-            <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
-                <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                    <span class="oh-card-dashboard__title">{% trans "Weekly Leave Analytics" %}</span>
-                </div>
-                <div class="oh-card-dashboard__body">
-                    <canvas id="leavePeriod" class="pointer"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="oh-modal" id="tableTimeOff" role="dialog" aria-labelledby="tableTimeOffModal" aria-hidden="true">
-    <div class="oh-modal__dialog oh-modal__dialog--timeoff oh-timeoff-modal">
-        <div class="oh-modal__dialog-header">
-
-            <button class="oh-modal__close" aria-label="Close">
-                <ion-icon name="close-outline"></ion-icon>
-            </button>
-        </div>
-
-        <div id="requestView">
-
-        </div>
-
-    </div>
-</div>
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'dashboard/dashboard.js' %}"></script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 <script>
-    $(document).ready(function () {
-        $("#requestedLeaves").on("click", function () {
-            window.location.href = '{% url "request-view" %}?status=requested&from_date={{today}}'
-        })
-        $("#approvedLeaves").on("click", function () {
-            window.location.href = '{% url "request-view" %}?status=approved&from_date={{first_day}}&to_date={{last_day}}'
-        })
-        $("#rejectedLeaves").on("click", function () {
-            window.location.href = '{% url "request-view" %}?status=rejected&from_date={{first_day}}&to_date={{last_day}}'
-        })
-    })
+    // Leave Trends Chart
+    const trendCtx = document.getElementById('leavesTrendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Approved Leaves',
+                data: [5, 8, 12, 7, 9, 4, 6],
+                borderColor: '#43a047',
+                tension: 0.4
+            }, {
+                label: 'Pending Leaves',
+                data: [3, 5, 7, 4, 6, 2, 4],
+                borderColor: '#ffa000',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
 
-    function helptextView(event,text) {
-        event = event || window.event;
-        const icon = event.target || event.srcElement;
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip';
-        tooltip.textContent = text; // Help text
-
-        // Position the tooltip relative to the icon
-        const rect = icon.getBoundingClientRect();
-        tooltip.style.top = rect.top + icon.offsetHeight + 'px';
-        tooltip.style.left = rect.left + 'px';
-
-        // Append tooltip to the body
-        document.body.appendChild(tooltip);
-
-        // Remove tooltip when mouse is moved away from the icon
-        icon.addEventListener('mouseout', function () {
-            document.body.removeChild(tooltip);
-        });
-    }
+    // Leave Types Chart
+    const typesCtx = document.getElementById('leaveTypesChart').getContext('2d');
+    new Chart(typesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Annual', 'Sick', 'Personal', 'Other'],
+            datasets: [{
+                data: [45, 25, 20, 10],
+                backgroundColor: ['#43a047', '#ffa000', '#e53935', '#1e88e5']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
 </script>
+
 {% endblock %}

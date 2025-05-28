@@ -1,180 +1,442 @@
 {% extends 'index.html' %}
 {% block content %}
-{% load basefilters %}
 {% load static i18n %}
-{% load i18n %}
-<style>
-    .oh-card-dashboard {
-        cursor:default;
-    }
-</style>
-<!-- End of Navigation -->
-<main :class="sidebarOpen ? 'oh-main__sidebar-visible' : ''">
-    <div class="oh-wrapper">
-        <div class="d-none mt-5">
 
+<!-- Modern PMS Dashboard -->
+<div class="pms-dashboard">
+    <!-- Top Stats Row -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Total Objectives</h3>
+                <h2>248</h2>
+                <p>+12 this month</p>
+            </div>
         </div>
-        <div class="oh-dashboard row" id="dashboard">
-            <div class="oh-dashboard__left col-12 col-sm-12 col-md-12 col-lg-9">
-                <div class="oh-dashboard__cards row">
-                    <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                        <div class="oh-card-dashboard oh-card-dashboard oh-card-dashboard--success">
-                            <div class="oh-card-dashboard__header">
-                                <span class="oh-card-dashboard__title">{% trans "Total employee objectives" %}</span>
+
+        <div class="stat-card">
+            <div class="stat-icon success">
+                <i class="fas fa-key"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Key Results</h3>
+                <h2>856</h2>
+                <p>85% achieved</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon warning">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Feedback Given</h3>
+                <h2>156</h2>
+                <p>Last 30 days</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon info">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Team Performance</h3>
+                <h2>92%</h2>
+                <p>Above target</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="dashboard-grid">
+        <!-- Performance Overview -->
+        <div class="dashboard-card large">
+            <div class="card-header">
+                <h3>Performance Overview</h3>
+                <div class="card-actions">
+                    <select class="modern-select">
+                        <option>This Quarter</option>
+                        <option>Last Quarter</option>
+                        <option>This Year</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Team Goals Progress -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Team Goals Progress</h3>
                             </div>
-                            <div class="oh-card-dashboard__body">
-                                <a href="{% url 'objective-list-view' %}" style="text-decoration: none;" class="oh-card-dashboard__counts">
-                                    <span class="oh-card-dashboard__count">{{count_objective}}</span>
-                                </a>
+            <div class="card-body">
+                <div class="goal-progress">
+                    <div class="goal-item">
+                        <div class="goal-info">
+                            <h4>Sales Target</h4>
+                            <span>85%</span>
                             </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 85%"></div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                        <div class="oh-card-dashboard oh-card-dashboard--neutral">
-                            <div class="oh-card-dashboard__header">
-                                <span class="oh-card-dashboard__title">{% trans "Total key results" %}</span>
+                    <div class="goal-item">
+                        <div class="goal-info">
+                            <h4>Customer Satisfaction</h4>
+                            <span>92%</span>
                             </div>
-                            <div class="oh-card-dashboard__body">
-                                {% if perms.pms.view_keyresult %}
-                                    <a href="{% url 'view-key-result' %}" style="text-decoration: none;" class="oh-card-dashboard__counts">
-                                        <span class="oh-card-dashboard__count">{{count_key_result}}</span>
-                                    </a>
-                                {% else %}
-                                    <span class="oh-card-dashboard__count">{{count_key_result}}</span>
-                                {% endif %}
-                            </div>
+                        <div class="progress-bar">
+                            <div class="progress success" style="width: 92%"></div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-12 col-md-6 col-lg-4">
-                        <div class="oh-card-dashboard oh-card-dashboard--danger">
-                            <div href="{% url 'objective-list-view' %}" style="text-decoration: none;" class="oh-card-dashboard__header">
-                                <span class="oh-card-dashboard__title">{% trans "Total feedbacks" %}</span>
+                    <div class="goal-item">
+                        <div class="goal-info">
+                            <h4>Project Completion</h4>
+                            <span>78%</span>
                             </div>
-                            <div class="oh-card-dashboard__body">
-                                <a href="{% url 'feedback-view' %}" style="text-decoration: none;" class="oh-card-dashboard__counts">
-                                    <span class="oh-card-dashboard__count">{{count_feedback}}</span>
-                                </a>
-                            </div>
+                        <div class="progress-bar">
+                            <div class="progress warning" style="width: 78%"></div>
                         </div>
                     </div>
                 </div>
-
-                <div class="oh-dashboard__movable-cards row mt-4">
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-5 oh-card-dashboard--moveable mb-3">
-                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
-                            <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                                <span class="oh-card-dashboard__title">{% trans "Objective status" %}</span>
-                                <span class="oh-card-dashboard__title float-end" id="objective-status-chart" style="cursor:pointer"><ion-icon name="caret-forward"></ion-icon></span>
-
-                            </div>
-                            <div class="oh-card-dashboard__body">
-                                {% if count_objective %}
-                                    <canvas id="objectiveChart" style="cursor:pointer"></canvas>
-                                {% else %}
-                                    <div style="height: 430px; display:flex;align-items: center;justify-content: center;" class="">
-                                        <div style="" class="">
-                                            <img style="display: block;width: 100px;margin: 20px auto ;" src="{% static 'images/ui/goal.png' %}" class="" alt="Page not found. 404."/>
-                                            <h3 style="font-size:16px" class="oh-404__subtitle">{% trans "No objectives are available." %}</h3>
                                         </div>
                                     </div>
-                                {% endif %}
+
+        <!-- Recent Feedback -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Recent Feedback</h3>
                             </div>
+            <div class="card-body">
+                <div class="feedback-list">
+                    <div class="feedback-item">
+                        <div class="feedback-avatar">
+                            <img src="https://ui-avatars.com/api/?name=John+Doe" alt="John Doe">
+                        </div>
+                        <div class="feedback-content">
+                            <h4>John Doe</h4>
+                            <p>Excellent progress on the Q1 objectives. Keep up the great work!</p>
+                            <span class="feedback-time">2 hours ago</span>
                         </div>
                     </div>
-                    {% if perms.pms.view_feedback or request.user|is_reportingmanager %}
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-5 oh-card-dashboard--moveable">
-                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
-                            <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                                <span class="oh-card-dashboard__title">{% trans "Key result status" %}</span>
-                                <span class="oh-card-dashboard__title float-end" id="key-result-status-chart" style="cursor:pointer"><ion-icon name="caret-forward"></ion-icon></span>
+                    <div class="feedback-item">
+                        <div class="feedback-avatar">
+                            <img src="https://ui-avatars.com/api/?name=Sarah+Smith" alt="Sarah Smith">
                             </div>
-                            <div class="oh-card-dashboard__body">
-                                {% if count_key_result %}
-                                    <canvas id="keyResultChart" style="cursor:pointer"></canvas>
-                                {% else %}
-                                    <div style="height: 430px; display:flex;align-items: center;justify-content: center;" class="">
-                                        <div style="" class="">
-                                            <img style="display: block;width: 100px;margin: 20px auto ;" src="{% static 'images/ui/keyresult.png' %}" class=""/>
-                                            <h3 style="font-size:16px" class="oh-404__subtitle">{% trans "No key results are available." %}</h3>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-5 mb-3 ">
-                        <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
-                            <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                                <span class="oh-card-dashboard__title">{% trans "Feedback status" %}</span>
-                                <span class="oh-card-dashboard__title float-end" id="feedback-status-chart" style="cursor:pointer"><ion-icon name="caret-forward"></ion-icon></span>
-                            </div>
-                            <div class="oh-card-dashboard__body">
-                                {% if count_feedback %}
-                                    <canvas id="feedbackChart" style="cursor:pointer"></canvas>
-                                {% else %}
-                                    <div style="height:220px; display:flex;align-items: center;justify-content: center;" class="">
-                                        <div style="" class="">
-                                            <img style="display: block;width: 100px;margin: 20px auto ;" src="{% static 'images/ui/feedback.png' %}" class="" />
-                                            <h3 style="font-size:16px" class="oh-404__subtitle">{% trans "No feedbacks are available." %}</h3>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            </div>
+                        <div class="feedback-content">
+                            <h4>Sarah Smith</h4>
+                            <p>Team collaboration has improved significantly this month.</p>
+                            <span class="feedback-time">5 hours ago</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="oh-dashboard__right  col-12 col-sm-12 col-md-12 col-lg-3">
-                <div class="oh-dashboard__events">
-
-                    <ul class="oh-dashboard__events-nav">
-                        <li class="oh-dashboard__events-nav-item oh-dashboard__events-nav-item--active" data-target="0">
-                        </li>
-                        <li class="oh-dashboard__events-nav-item" data-target="1"></li>
-                        <li class="oh-dashboard__events-nav-item" data-target="2"></li>
-                    </ul>
                 </div>
 
-                <div class="oh-card-dashboard oh-card-dashboard--no-scale oh-card-dashboard--transparent">
-                    <div class="oh-card-dashboard__header oh-card-dashboard__header--divider">
-                        <span class="oh-card-dashboard__title"> {% trans "Objectives At-Risk" %}</span>
+        <!-- At Risk Objectives -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>At Risk Objectives</h3>
+            </div>
+            <div class="card-body">
+                <div class="risk-list">
+                    <div class="risk-item">
+                        <div class="risk-status high"></div>
+                        <div class="risk-content">
+                            <h4>Market Research Project</h4>
+                            <p>Deadline: 2 days remaining</p>
+                        </div>
+                        <button class="action-btn">Review</button>
                     </div>
-                    <div class="oh-card-dashboard__body">
-                        {% if okr_at_risk %}
-                            <ul class="oh-card-dashboard__user-list">
-                            {% for okr in okr_at_risk %}
-                                <li class="oh-card-dashboard__user-item">
-                                        <a
-                                            hx-get='{% url "view-employee-objective" okr.id %}'
-                                            hx-target="#objectDetailsModalTarget"
-                                            data-toggle="oh-modal-toggle"
-                                            data-target="#objectDetailsModal"
-                                            type="button" title="{% trans 'View' %}"
-                                            class="oh-btn oh-btn--light-bkg p-3 w-100"  onclick="event.stopPropagation()"
-                                        >
-                                        <div class="oh-profile oh-profile--md">
-                                            <div class="oh-profile__avatar mr-1">
-                                                <img src="{{okr.employee_id.get_avatar}}"
-                                                class="oh-profile__image" alt="" />
+                    <div class="risk-item">
+                        <div class="risk-status medium"></div>
+                        <div class="risk-content">
+                            <h4>Customer Feedback Analysis</h4>
+                            <p>Progress: 45% (Below target)</p>
                                             </div>
-                                            <span class="oh-profile__name oh-text--dark">{{okr.employee_id}}</span>
-                                        </div>
-                                    </a>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <h6 style="font-size:16px; text-align:left;" class="oh-404__subtitle" >{% trans "No OKRs are currently At-Risk." %}</h6>
-                        {% endif %}
+                        <button class="action-btn">Review</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</main>
+</div>
 
+<!-- Required CSS -->
+<style>
+    .pms-dashboard {
+        padding: 2rem;
+        background: #f8f9fa;
+    }
 
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        display: flex;
+        align-items: center;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        gap: 1.5rem;
+    }
+
+    .stat-icon {
+        background: #4e73df;
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-icon.success { background: #1cc88a; }
+    .stat-icon.warning { background: #f6c23e; }
+    .stat-icon.info { background: #36b9cc; }
+
+    .stat-content h2 {
+        font-size: 1.5rem;
+        margin: 0.25rem 0;
+        color: #2e384d;
+        font-weight: 600;
+    }
+
+    .stat-content h3 {
+        color: #6e7687;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .stat-content p {
+        color: #95aac9;
+        margin: 0;
+        font-size: 0.875rem;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .dashboard-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .dashboard-card.large {
+        grid-column: 1 / -1;
+    }
+
+    .card-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid #e3e6f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .modern-select {
+        padding: 0.5rem;
+        border: 1px solid #e3e6f0;
+        border-radius: 6px;
+        background: white;
+    }
+
+    .goal-progress {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .goal-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .goal-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .goal-info h4 {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #2e384d;
+    }
+
+    .progress-bar {
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 100%;
+        background: #4e73df;
+        border-radius: 4px;
+    }
+
+    .progress.success { background: #1cc88a; }
+    .progress.warning { background: #f6c23e; }
+
+    .feedback-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .feedback-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .feedback-avatar img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+    .feedback-content {
+        flex: 1;
+    }
+
+    .feedback-content h4 {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #2e384d;
+    }
+
+    .feedback-content p {
+        margin: 0.25rem 0;
+        color: #6e7687;
+        font-size: 0.875rem;
+    }
+
+    .feedback-time {
+        font-size: 0.75rem;
+        color: #95aac9;
+    }
+
+    .risk-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .risk-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .risk-status {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .risk-status.high { background: #e74a3b; }
+    .risk-status.medium { background: #f6c23e; }
+
+    .risk-content {
+        flex: 1;
+    }
+
+    .risk-content h4 {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #2e384d;
+    }
+
+    .risk-content p {
+        margin: 0.25rem 0 0;
+        color: #6e7687;
+        font-size: 0.75rem;
+    }
+
+    .action-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        background: #4e73df;
+        color: white;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: background 0.3s ease;
+    }
+
+    .action-btn:hover {
+        background: #2e59d9;
+    }
+</style>
+
+<!-- Required JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{%static 'src/dashboard/pmsChart.js' %}"></script>
-{% endblock %}
+<script>
+    // Performance Overview Chart
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Team Performance',
+                data: [75, 82, 78, 85, 88, 92],
+                borderColor: '#4e73df',
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: value => value + '%'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock content %}
